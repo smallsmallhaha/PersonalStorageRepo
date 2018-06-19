@@ -1,0 +1,10 @@
+# 安装 openssh-server
+sudo apt-get install openssh-server
+
+# 开启"用户名-密码"登录
+vim /etc/ssh/sshd_config
+    PasswordAuthentication yes
+sudo service ssh restart
+
+# 开启免密登录
+cat ~/.ssh/id_rsa.pub | ssh username@<YOUR_IP> 'cat - >> ~/.ssh/authorized_keys'

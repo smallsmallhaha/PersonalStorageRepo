@@ -1,0 +1,31 @@
+1. setup up ROS environment
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+sudo apt-get update
+sudo apt-get install ros-kinetic-desktop-full
+source /opt/ros/kinetic/setup.zsh'
+TIPS:
+source devel/setup.sh => override ROS_PACKAGE_PATH
+catkin_make => ROS_PACKEGE_PATH=<current-package-path>:${ROS_PACKEGE_PATH}
+2. catkin_make
+Creates the catkin workspace layout and invokes cmake and make.
+usage: catkin_make [-h] [-C DIRECTORY] [--source SOURCE] [--build BUILD]
+                   [--use-ninja] [--use-nmake] [--force-cmake] [--no-color]
+                   [--pkg PKG [PKG ...]]
+                   [--only-pkg-with-deps ONLY_PKG_WITH_DEPS [ONLY_PKG_WITH_DEPS ...]]
+                   [--cmake-args [CMAKE_ARGS [CMAKE_ARGS ...]]]
+                   [--make-args [MAKE_ARGS [MAKE_ARGS ...]]]
+                   [--override-build-tool-check]
+3. catkin_make_isolated
+Builds each catkin (and non-catkin) package from a given workspace in isolation, but still in topological order.
+usage: catkin_make_isolated [-h] [-C WORKSPACE] [--source SOURCE]
+                            [--build BUILD] [--devel DEVEL] [--merge]
+                            [--install-space INSTALL_SPACE] [--use-ninja]
+                            [--use-nmake] [--install] [--force-cmake]
+                            [--no-color] [--pkg PKGNAME [PKGNAME ...] |
+                            --from-pkg PKGNAME]
+                            [--only-pkg-with-deps ONLY_PKG_WITH_DEPS [ONLY_PKG_WITH_DEPS ...]]
+                            [-q] [--cmake-args [CMAKE_ARGS [CMAKE_ARGS ...]]]
+                            [--make-args [MAKE_ARGS [MAKE_ARGS ...]]]
+                            [--catkin-make-args [CATKIN_MAKE_ARGS [CATKIN_MAKE_ARGS ...]]]
+                            [--override-build-tool-check]

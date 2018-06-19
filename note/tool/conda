@@ -1,0 +1,12 @@
+从下面网址下载anaconda：
+https://mirror.tuna.tsinghua.edu.cn/help/anaconda/
+
+conda用法：
+# 新建conda虚拟环境
+conda create -n py3.6 python3=3.6
+# 加载虚拟环境
+source activate py3.6
+# 在虚拟环境中安装numpy
+conda install numpy
+# 退出虚拟环境
+source deactivate

@@ -1,0 +1,9 @@
+依次加载和编译以下cmake工程（版本一定要对应）:
+  cartographer_ros_msgs
+  ceres-solver
+  cartographer
+  cartographer_ros
+  cartographer_rviz
+工程选项按如下设置:
+  Build type: Release
+  Extra argument: -DCMAKE_INSTALL_PREFIX=/home/whu/Documents/ros/develANDinstall/install -DCATKIN_DEVEL_PREFIX=/home/whu/Documents/ros/develANDinstall/devel

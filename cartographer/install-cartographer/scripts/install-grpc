@@ -1,0 +1,9 @@
+安装步骤：
+1. 编译安装对应版本的protobuf
+
+2. 编译安装gRPC，命令如下
+make install -j8 prefix=<install-directory>
+
+最后，请进入安装目录，执行
+ln -s libgrpc++.so.1.10.0 libgrpc++.so.1
+ln -s libgrpc++_reflection.so.1.10.0 libgrpc++_reflection.so.1

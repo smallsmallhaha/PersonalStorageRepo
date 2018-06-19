@@ -1,0 +1,25 @@
+1. 下载当前文件夹下的所有文件，解压cartogarpher-src.tar.gz得到src文件夹，将scripts移动到src文件夹下，src文件夹下的软件版本(或git分支)为:
+    cartographer      master
+    cartographer_ros  master
+    ceres-solver      1.13.0
+    driver_common     indigo-devel
+    hokuyo_node       indigo-devel
+    lidar_slam        master
+    protobuf          3.4.1
+    xsens_node        master
+
+2. 安装过程
+# 更新所有源码
+./update-all-source-code.sh
+# 初始化安装环境
+./init-installation-env.sh
+# 重新打开一个终端
+# 安装驱动程序
+./install-driver.sh
+# 安装cartographer依赖
+./install-cartographer-deps.sh
+# 安装proto3
+./install-proto3.sh
+# 重新打开一个终端
+# 安装cartographer
+./install-cartographer.sh

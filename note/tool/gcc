@@ -1,0 +1,127 @@
+1. 常见编译选项
+-E 预处理
+-S 预处理，编译
+-c 预处理，编译，汇编
+-o 输出文件
+-l 链接库名称
+-L 链接库路径
+-I 头文件搜索路径
+-g 增加调试信息
+-O0 -O1 -O2 -O3 优化级别，默认-O0
+-Dmacro[=defn] 宏定义
+-Wall 生成所有警告信息
+-Werror 将所有警告当成错误
+-static 生成静态库
+-shared 生成动态库，一般与-fPIC选项结合使用
+-Wa,<options> 将逗号分割的选项传递给汇编器
+-Wp,<options> 将逗号分割的选项传递给预处理器
+-Wl,<options> 将逗号分割的选项传递给链接器
+-v 打印编译过程中的信息
+
+2. 库的生成和链接示例
+现有文件结构和内容如下：
+./lib/1.h:
+    void f1();
+./lib/1.c:
+    #include "1.h"
+    void f1() { }
+./lib/2.h:
+    void f2();
+./lib/2.c:
+    #include "2.h"
+    void f2() { }
+./main.c:
+    #include <1.h>
+    #include <2.h>
+    int main() {
+        f1();
+        f2();
+        return 0;
+    }
+
+动态链接库(普通):
+gcc -c -o 1.o lib/1.c
+gcc -c -o 2.o lib/2.c
+gcc -shared -o libtest.so 1.o 2.o
+gcc main.c -I./lib -L. -ltest
+
+动态共享库:
+gcc -fPIC -c -o 1.o lib/1.c
+gcc -fPIC -c -o 2.o lib/2.c
+gcc 1.o 2.o -shared -fPIC -o libtest.so
+gcc main.c -I./lib -L. -ltest
+
+静态链接库:
+gcc -c -o 1.o lib/1.c
+gcc -c -o 2.o lib/2.c
+ar r libtest.a 1.o 2.o
+gcc main.c -I./lib -L. -ltest -static
+
+3. 混合链接
+动态链接： 默认
+静态链接： 加-static参数
+混合链接： gcc test.cpp -L. -Wl,-Bdynamic -ltestdll -Wl,-Bstatic -ltestlib -Wl,-Bdynamic
+
+4. 库的兼容性
+程式库主要的升级会破坏相容性，而次要的升级则可能不会，可以通过指定soname的方式解决版本更新问题。
+gcc -shared -Wl,-soname,libfoo.so.major -o libfoo.so.major.minor
+编译时，链接器将指定的soname写入到最终生成的elf文件的dynamic节区
+运行时，装载器通过elf文件的dynamic节区查找所需库文件并加载到内存中去
+
+5. 动态库搜索路径
+链接时
+a. gcc -L 选项指定的目录
+b. 环境变量LIBRARY_PATH
+c. gnu库目录和系统库目录
+
+运行时
+a. ELF可执行文件中动态段中DT_RPATH所指定的路径，可以对gcc加入链接参数“-Wl,-rpath”指定动态库搜索路径
+b．环境变量LD_LIBRARY_PATH
+c. /etc/ld.so.cache中缓存的动态库路径，通过修改配置文件/etc/ld.so.conf和/etc/ld.so.conf.d/来改变
+d. /lib
+e. /usr/lib
+
+6. 库和符号的查找
+对于library的查找
+查找需要连接的符号名是从前向后找，根据-L指定的路径顺序查找；不同目录下的同名的库，只取第一个
+（从左向右），后面同名库被忽略。
+
+对于符号的查找
+从左向右查找，如果是主程序块和静态库，不能定位地址就报错： ‘undefined reference to: xxx’
+如果是链接成动态库，则假设该符号在load的时候地址重定位。如果找不到对应的动态库，则会在load
+的时候报：“undefined symbol: xxx“这样的错误。
+
+–as-needed就是忽略链接时没有用到的动态库，只将用到的动态库set NEEDED。
+
+链接主程序模块或者是静态库的时的‘undefined reference to: xxx’
+g++ -Wl,--as-needed -lGalaxyRT -lm -lpthread -o mutex mutex.o
+假设mutex依赖libGalaxyRT.so中的东西。想想，因为gcc对库的顺序要求 和–as-needed
+（因为libGalaxyRT.so在mutex.o的左边，所以gcc认为没有 用到它，–as-needed将其忽略），
+ld忽略libGalaxyRT.so，定位mutex.o的 符号的时候当然会找不到符号的定义！所以‘undefined 
+reference to’这个错误是正常的！
+
+!!! gcc 5.4.0 默认开启 -as-needed
+
+正确的链接方式是：
+g++ -Wl,--as-needed mutex.o -lGalaxyRT -lm -lpthread -o mutex
+
+编译出来的动态库的时候没有问题，但是加载的时候有“undefined symbol: xxx”这样的错误。
+假如像这也链接PyGalaxy.so
+
+g++ -shared -Wl,--as-needed -lGalaxyParser -lm -lpthread -o PyGalaxy.so PyGalaxy.o
+load PyGalaxy.so的时候会有上面的运行时错误!
+
+简单分析原因：因为libGalaxyParser.so在mutex.o的左边，所以gcc认为没有用到它，–as-needed
+将其忽略。但是前面说的动态库符号解析的特点导 致ld认为某些符号是加载的时候才去地址重定位的。
+但是 libGalaxyParser.so已经被忽略了。所以就算你写上了依赖的库，load的时 候也会找不到符号。
+但是为什么没有-Wl–as-needed的时候是正确的呢？没 有的话，ld会set NEEDED libGalaxyParser.so
+（用前面提到的查看动态库 依赖关系的办法可以验证）。load的时候还是可以找到符号的，所以正确。
+
+正确的链接方式是：
+g++ -shared -Wl,--as-needed PyGalaxy.o -lGalaxyParser -lm -lpthread -o PyGalaxy.so
+
+
+在项目开发过层中尽量让lib是垂直关系，避免循环依赖；越是底层的库，越是往后面写！
+例如:
+
+g++ ... obj($?) -l(上层逻辑lib) -l(中间封装lib) -l(基础lib) -l(系统lib) -o $@

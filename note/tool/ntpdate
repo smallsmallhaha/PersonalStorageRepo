@@ -1,0 +1,5 @@
+# update time through network
+sudo apt-get install ntpdate -y
+sudo ntpdate time.windows.com
+# write time into hardware
+sudo hwclock --localtime --systohc

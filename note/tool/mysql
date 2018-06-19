@@ -1,0 +1,3 @@
+Open /etc/mysql/my.cnf, add the following to '[mysqld]' to enable utf-8 support:
+default-character-set = utf8
+character_set_server = utf8

@@ -1,0 +1,53 @@
+git图解
+        http://marklodato.github.io/visual-git-guide/index-zh-cn.html
+progit (含中文版本)
+        https://git-scm.com/book/en/v2
+
+
+
+Git:
+
+小结
+现在总结一下今天学的两点内容：
+初始化一个Git仓库，使用git init命令。
+添加文件到Git仓库，分两步：
+第一步，使用命令git add <file>，注意，可反复多次使用，添加多个文件；
+第二步，使用命令git commit，完成。
+
+小结
+要随时掌握工作区的状态，使用git status命令。
+如果git status告诉你有文件被修改过，用git diff可以查看修改内容。
+
+小结
+现在总结一下：
+HEAD指向的版本就是当前版本，因此，Git允许我们在版本的历史之间穿梭，使用命令git reset --hard commit_id。
+穿梭前，用git log可以查看提交历史，以便确定要回退到哪个版本。
+要重返未来，用git reflog查看命令历史，以便确定要回到未来的哪个版本。
+
+小结
+现在，你又理解了Git是如何跟踪修改的，每次修改，如果不add到暂存区，那就不会加入到commit中。
+
+小结
+场景1：当你改乱了工作区某个文件的内容，想直接丢弃工作区的修改时，用命令git checkout -- file。
+场景2：当你不但改乱了工作区某个文件的内容，还添加到了暂存区时，想丢弃修改，分两步，第一步用命令git reset HEAD file，就回到了场景1，第二步按场景1操作。
+场景3：已经提交了不合适的修改到版本库时，想要撤销本次提交，参考版本回退一节，不过前提是没有推送到远程库。
+
+notes:
+1. 起步
+1.3.1 直接快照，而非比较差异
+1.3.5 三种状态
+committed modified staged,已提交表示该文件已经被安全地保存在本地数据
+库中了;已修改表示修改了某个文件,但还没有提交保存;已暂存表示把已修改的文件放在下次提交时要保存
+的清单中。
+1.5.1 用户信息
+$ git config --global user.name "John Doe"
+$ git config --global user.email johndoe@example.com
+$ git config --global core.editor vim
+1.5.4 要检查已有的配置信息,可以使用 git config --list 命令
+1.6 获取帮助 git help <verb>
+
+2. Git 基础
+2.1 取得项目的Git仓库
+2.1.1 从当前目录初始化 git init
+2.1.2 从仓库克隆 git clone git://github.com/liu-whuer/cmvs.git
+

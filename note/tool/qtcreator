@@ -1,0 +1,10 @@
+Q: How to enable clang-format for C/C++?
+A: Install clang-format,
+   open "About -> Plugins", pick "C++/Beautifier" option,
+   restart qt-creator,
+   open "Tools -> Options -> Beautifier -> Clang Format", select "Google" style,
+   done.
+
+Q: How to load a ROS environment in qt-creator?
+A: Edit /usr/share/applications/DigiaQt-qtcreator-community.desktop, add "bash -i -c " before "/opt/Qt5.11.0/Tools/QtCreator/bin/qtcreator",
+   change cmake option from "CMAKE_PREFIX_PATH:STRING=%{Qt:QT_INSTALL_PREFIX}" to "CMAKE_PREFIX_PATH:STRING=home/username/catkin/install;/opt/ros/kinetic".

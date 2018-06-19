@@ -1,0 +1,12 @@
+我们假设以下命令报了错误'std::bad_alloc'：
+/home/whu/Documents/ros/develANDinstall/install/lib/cartographer_ros/cartographer_offline_node -configuration_directory /home/whu/Documents/ros/develANDinstall/install/share/cartographer_ros/configuration_files -configuration_basename backpack_2d.lua -urdf_filename /home/whu/Documents/ros/develANDinstall/install/share/cartographer_ros/urdf/backpack_2d.urdf -bag_filenames /home/whu/Documents/data/slam/cartographer/b2-2016-04-05-14-44-52.bag echoes:=horizontal_laser_2d
+可以看出这是cartographer_ros报的错误，以Debug模式重新编译安装cartographer_ros和cartographer_rviz，然后按照下列步骤调试：
+1. 生成core文件
+$ ulimit -c unlimited
+$ /home/whu/Documents/ros/develANDinstall/install/lib/cartographer_ros/cartographer_offline_node -configuration_directory /home/whu/Documents/ros/develANDinstall/install/share/cartographer_ros/configuration_files -configuration_basename backpack_2d.lua -urdf_filename /home/whu/Documents/ros/develANDinstall/install/share/cartographer_ros/urdf/backpack_2d.urdf -bag_filenames /home/whu/Documents/data/slam/cartographer/b2-2016-04-05-14-44-52.bag echoes:=horizontal_laser_2d
+2. 调试
+$ gdb /home/whu/Documents/ros/develANDinstall/install/lib/cartographer_ros/cartographer_offline_node core
+$ gdb
+(gdb) set args -configuration_directory /home/whu/Documents/ros/develANDinstall/install/share/cartographer_ros/configuration_files -configuration_basename backpack_2d.lua -urdf_filename /home/whu/Documents/ros/develANDinstall/install/share/cartographer_ros/urdf/backpack_2d.urdf -bag_filenames /home/whu/Documents/data/slam/cartographer/b2-2016-04-05-14-44-52.bag echoes:=horizontal_laser_2d
+(gdb) run
+(gdb) bt full

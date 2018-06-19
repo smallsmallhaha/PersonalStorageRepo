@@ -1,0 +1,116 @@
+digraph G {
+    rankdir=BT
+
+    node [
+        fontname = "Courier New"
+        fontsize = 8
+        shape = "record"
+    ]
+
+    // defination for classes
+
+    SubmapId [
+    	label = "{SubmapId
+    		\l|- trajectory_id : int
+    		\l- submap_index : int
+    		\l}"
+    ]
+
+    NodeId [
+    	label = "{NodeId
+    		\l|- trajectory_id : int
+    		\l- node_index : int
+    		\l}"
+    ]
+
+    Tag [
+    	label = "{Tag (enum)
+    		\l|- INTRA_SUBMAP
+    		\l- INTER_SUBMAP
+    		\l}"
+    ]
+
+    Constraint [
+    	label = "{Constraint
+    		\l|- submap_id : SubmapId
+    		\l- node_id : NodeId
+    		\l- pose : Rigid3d
+    		\l- translation_weight : double
+    		\l- rotation_weight : double
+    		\l- tag : Tag
+    		\l}"
+    ]
+
+    SparsePoseGraph [
+    	label = "{SparsePoseGraph
+    		\l|- constraint : Constraint[]
+    		\l- trajectory : Trajectory[]
+    		\l}"
+    ]
+
+    Trajectory [
+    	label = "{Trajectory
+    		\l|- node : Node[]
+    		\l(Node : \{ timestamp: int; pose: Rigid3d \})
+    		\l- submap : Submap[]
+    		\l(Submap : \{ pose : Rigid3d \})
+    		\l}"
+    ]
+
+    SerializedData [
+    	label = "{SerializedData
+    		\l|- submap : Submap
+    		\l- node : Node
+    		\l}"
+    ]
+
+    Submap [
+    	label = "{Submap
+    		\l|- submap_id : SubmapId
+    		\l- submap_2d : Submap2D
+    		\l- submap_3d : Submap3D
+    		\l}"
+    ]
+
+    Node_ [
+    	label = "{Node
+    		\l|- node_id : NodeId
+    		\l- node_data : TrajectoryNodeData
+    		\l}"
+    ]
+
+    Submap2D [
+    	label = "{Submap2D
+    		\l|- local_pose : Rigid3d
+    		\l- num_range_data : int
+    		\l- finished : bool
+    		\l- probability_grid : mapping_2d.proto.ProbabilityGrid
+    		\l}"
+    ]
+
+    ProbabilityGrid2D [
+    	label = "{mapping_2d.proto.ProbabilityGrid
+    		\l|- limits : MapLimits
+    		\l- cells : int[]
+    		\l- max_x : int
+    		\l- max_y : int
+    		\l- min_x : int
+    		\l- min_y : int
+    		\l}"
+    ]
+
+
+
+    // combination
+    edge [arrowhead = diamond]
+
+
+    SubmapId,NodeId,Tag -> Constraint
+    Constraint,Trajectory -> SparsePoseGraph
+    Submap,Node_ -> SerializedData
+    SubmapId,Submap2D,Submap3D -> Submap
+    NodeId,TrajectoryNodeData -> Node_
+    ProbabilityGrid -> Submap2D
+    ProbabilityGrid2D -> ProbabilityGrid
+
+}

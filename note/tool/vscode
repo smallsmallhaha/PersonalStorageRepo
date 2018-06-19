@@ -1,0 +1,12 @@
+Plugins:
+C/C++
+Clang-Format
+Graphviz Preview
+XML Tools
+
+
+Settings:
+File->Preferences->Settings 
+{
+    "editor.wordWrap": "on"
+}

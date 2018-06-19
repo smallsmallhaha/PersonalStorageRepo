@@ -1,0 +1,124 @@
+digraph G {
+    rankdir=BT
+
+    node [
+        fontname = "Courier New"
+        fontsize = 8
+        shape = "record"
+    ]
+
+    // defination for classes
+
+    Node_ [
+        label = "{Node
+            \l|- map_builder_bridge_ : MapBuilderBridge
+            \l|}"
+    ]
+
+    MapBuilderBridge [
+        label = "{MapBuilderBridge
+            \l|- map_builder_ : MapBuilder
+            \l- sensor_bridges_ : map\<int,SensorBridge*\>
+            \l|+ AddTrajectory() //init sensor_bridges_
+            \l}"
+    ]
+
+    SensorBridge [
+        label = "{SensorBridge
+            \l|- trajectory_builder_ : TrajectoryBuilder*
+            \l- tf_bridge_ : TfBridge
+            \l|}"
+    ]
+
+    MapBuilder [
+        label = "{MapBuilder
+            \l|- thread_pool_ : ThreadPool
+            \l- sparse_pose_graph : SparsePoseGraph*
+            \l- trajectory_builders_ : *TrajectoryBuilder[]
+            \l- sensor_collator_ : Collator
+            \l|+ AddTrajectoryBuilder() //init trajectory_builders_(use Collator)
+            \l}"
+    ]
+
+    SparsePoseGraph2D [
+        label = "{SparsePoseGraph2D|- optimization_problem_ : OptimizationProblem
+            \l- constraint_builder_ : ConstraintBuilder
+            \l- trajectory_connectivity_state_ : TrajectoryConnectivityState
+            \l|}"
+    ]
+
+    ConstraintBuilder [
+        label = "{ConstraintBuilder|- thread_pool_ : ThreadPool*
+            \l- ceres_scan_matcher_ : CeresScanMatcher
+            \l|}"
+    ]
+
+    CeresScanMatcher  [
+        label = "{CeresScanMatcher|
+            \l|+ Match() //!!!important}"
+        style="filled"
+        fillcolor="chartreuse"
+    ]
+
+    CollatedTrajectoryBuilder [
+        label = "{CollatedTrajectoryBuilder|- trajectory_id_ : int
+            \l- sensor_collator_ : Collator*
+            \l|}"
+    ]
+
+    TrajectoryBuilder [
+        label = "{TrajectoryBuilder|
+            \l|+ AddSensorData()
+            \l}"
+    ]
+
+    Collator [
+        label = "{Collator
+            \l|- queue_ : OrderedMultiQueue
+            \l|+ AddSensorData()
+            \l}"
+    ]
+
+    OrderedMultiQueue [
+        label = "{OrderedMultiQueue
+            \l|!!!sensor data reserved here
+            \l}"
+        style="filled"
+        fillcolor="chartreuse"
+    ]
+
+    OptimizationProblem [
+        label = "{OptimizationProblem
+            \l|!!!SPA algrithm implemented here
+            \l}"
+        style="filled"
+        fillcolor="chartreuse"
+    ]
+
+
+
+
+    // inher
+    edge [arrowhead = empty]
+  
+    SparsePoseGraph2D -> SparsePoseGraph
+    CollatedTrajectoryBuilder -> TrajectoryBuilder
+
+    // combination
+    edge [arrowhead = diamond]
+
+    MapBuilderBridge -> Node_
+    
+    MapBuilder,SensorBridge -> MapBuilderBridge
+    ThreadPool,TrajectoryBuilder,SparsePoseGraph,Collator -> MapBuilder
+    TrajectoryBuilder -> SensorBridge
+
+    OptimizationProblem,ConstraintBuilder,TrajectoryConnectivityState -> SparsePoseGraph2D
+    ThreadPool,CeresScanMatcher -> ConstraintBuilder
+
+    Collator -> CollatedTrajectoryBuilder
+
+    OrderedMultiQueue -> Collator
+
+
+}

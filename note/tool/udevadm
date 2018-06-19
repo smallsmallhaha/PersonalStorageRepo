@@ -1,0 +1,47 @@
+sysfs: a file system
+devpath: relative path in /sys of a device
+
+
+udevadm info [OPTIONS] [DEVPATH|FILE]
+
+Query sysfs or the udev database.
+
+  -h --help                   Print this message
+     --version                Print version of the program
+  -q --query=TYPE             Query device information:
+       name                     Name of device node
+       symlink                  Pointing to node
+       path                     sysfs device path
+       property                 The device properties
+       all                      All values
+  -p --path=SYSPATH           sysfs device path used for query or attribute walk
+  -n --name=NAME              Node or symlink name used for query or attribute walk
+  -r --root                   Prepend dev directory to path names
+  -a --attribute-walk         Print all key matches walking along the chain
+                              of parent devices
+  -d --device-id-of-file=FILE Print major:minor of device containing this file
+  -x --export                 Export key/value pairs
+  -P --export-prefix          Export the key name with a prefix
+  -e --export-db              Export the content of the udev database
+  -c --cleanup-db             Clean up the udev database
+
+$ udevadm info --attribute-walk --name=/dev/sdc
+$ udevadm info --query=all --name=sdc
+
+
+udevadm monitor [--property] [--kernel] [--udev] [--help]
+
+Listen to kernel and udev events.
+
+  -h --help                                Show this help
+     --version                             Show package version
+  -p --property                            Print the event properties
+  -k --kernel                              Print kernel uevents
+  -u --udev                                Print udev events
+  -s --subsystem-match=SUBSYSTEM[/DEVTYPE] Filter events by subsystem
+  -t --tag-match=TAG                       Filter events by tag
+
+$ udevadm monitor
+monitor will print the received events for:
+UDEV - the event which udev sends out after rule processing
+KERNEL - the kernel uevent

@@ -1,0 +1,37 @@
+digraph G {
+    rankdir=LR
+
+    node [
+        fontname = "Courier New"
+        fontsize = 8
+        shape = "record"
+    ]
+
+    // defination for classes
+
+    FILE [
+        label = "FILE"
+    ]
+
+    STDOUT [
+        label = "stdout"
+    ]
+
+    PATTERN_SPACE [
+        label = "pattern space"
+    ]
+
+    HOLD_SPACE [
+        label = "hold space"
+    ]
+
+    FILE -> PATTERN_SPACE [ label = "n/N" ]
+    PATTERN_SPACE -> STDOUT [ label = "p/P(oneline)" ]
+    PATTERN_SPACE -> HOLD_SPACE [ label = "h/H(append)" ]
+    HOLD_SPACE -> PATTERN_SPACE [ label = "g/G(append)" ]
+    PATTERN_SPACE -> PATTERN_SPACE [ label = "d/D(oneline)" ]
+
+    PATTERN_SPACE -> HOLD_SPACE [ label = "x" arrowhead = "none" ]
+
+
+}

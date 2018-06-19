@@ -1,0 +1,63 @@
+r (Read) : 对文件而言，具有读取文件内容的权限；对目录来说，具有浏览目录的权限。
+w (Write) : 对文件而言，具有新增、修改文件内容的权限；对目录来说，具有删除、移动目录内文件的权限。
+x (eXecute) : 对文件而言，具有执行文件的权限；对目录了来说该用户具有进入目录的权限。
+s (SUID,Set UID) : 以文件属主和文件属组的身份执行该文件。
+t (Sticky) : 除了文件属主和root，其它用户不能删除文件。
+
+
+-rw-rw-rw- 0666
+-rwSrwSrwT 7666
+-rwsrwsrwt 7777
+
+The setuid bit
+When the setuid bit is used, the behavior described above it's modified so 
+that when an executable is launched, it does not run with the privileges 
+of the user who launched it, but with that of the file owner instead. So, 
+for example, if an executable has the setuid bit set on it, and it's owned 
+by root, when launched by a normal user, it will run with root privileges. 
+It should be clear why this represents a potential security risk, if not 
+used correctly. 
+
+An example of an executable with the setuid permission set is passwd, 
+the utility we can use to change our login password. We can verify that by 
+using the ls command:
+ls -l /bin/passwd
+-rwsr-xr-x. 1 root root 27768 Feb 11  2017 /bin/passwd
+How to identify the setuid bit? As you surely have noticed looking at the 
+output of the command above, the setuid bit is represented by an s in place 
+of the x of the executable bit. The s implies that the executable bit is set, 
+otherwise you would see a capital S. This happens when the setuid or setgid 
+bits are set, but the executable bit is not, showing the user an 
+inconsistency: the setuid and setgit bits have no effect if the executable 
+bit is not set. The setuid bit has no effect on directories.
+
+The setgid bit
+Unlike the setuid bit, the setgid bit has effect on both files and 
+directories. In the first case, the file which has the setgid bit set, when 
+executed, instead of running with the privileges of the group of the user 
+who started it, runs with those of the group which owns the file: in other 
+words, the group ID of the process will be the same of that of the file. 
+
+When used on a directory, instead, the setgid bit alters the standard 
+behavior so that the group of the files created inside said directory, will 
+not be that of the user who created them, but that of the parent directory 
+itself. This is often used to ease the sharing of files (files will be 
+modifiable by all the users that are part of said group). Just like the setuid,
+the setgid bit can easily be spotted (in this case on a test directory):
+ls -ld test
+drwxrwsr-x. 2 egdoc egdoc 4096 Nov  1 17:25 test
+This time the s is present in place of the executable bit on the group sector.
+
+The sticky bit
+The sticky bit works in a different way: while it has no effect on files, when 
+used on a directory, all the files in said directory will be modifiable only 
+by their owners. A typical case in which it is used, involves the /tmp directory. 
+Typically this directory is writable by all users on the system, so to make 
+impossible for one user to delete the files of another one, the sticky bit is set:
+$ ls -ld /tmp
+drwxrwxrwt. 14 root root 300 Nov  1 16:48 /tmp
+In this case the owner, the group, and all other users, have full permissions on 
+the directory (read, write and execute). The sticky bit is identifiable by a t which 
+is reported where normally the executable x bit is shown, in the "other" section. 
+Again, a lowercase t implies that the executable bit is also present, otherwise you 
+would see a capital T.

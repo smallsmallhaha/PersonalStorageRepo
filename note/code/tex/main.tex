@@ -1,0 +1,260 @@
+% !TeX encoding = UTF-8
+% import ctexart
+\documentclass{ctexart}
+%\setCJKmainfont{AR PL UMing CN}  %换成本地字体
+
+% headers and footers
+\usepackage{fancyhdr}
+\pagestyle{plain}
+% hyperref
+\usepackage{hyperref}
+% insert codes
+\usepackage{listings}
+% math font and formula
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\usepackage{CJKulem}
+
+
+
+\title{NOTES}
+\author{kekliu\\Wuhan University\\\\created by \LaTeX}
+
+
+
+\begin{document}
+	
+	\maketitle
+	% 封面无页码,下一页
+	\thispagestyle{empty}
+	\pagebreak
+	
+	\tableofcontents
+	% 封面无页码,下一页
+	\thispagestyle{empty}
+	\pagebreak
+	
+	%设置第一页页码
+	\setcounter{page}{1}
+	
+	
+	
+	
+	\section{已知运动轨迹，推算向心力}
+	\subsection{问题}
+	已知物体仅在向心力的作用下沿着给定轨迹运动，求该向心力的规律。
+	\subsection{推导}
+	设某个时刻，物体的位置矢量为 $ \vec{r} =(x,y) $，速度矢量为 $ \vec{v}=(v_x,v_y)=v_x (1,y') $，其中，$ y'=\frac{dy}{dx} $。
+	\\
+	由动量守恒知，$ \vec{r}\times\vec{v}=const $，则$ v_x\propto\frac{1}{y-y'x} $，令
+	\begin{equation} v_x=\frac{k}{y-y'x} \end{equation}
+	则加速度
+	\begin{equation}
+	\begin{split}
+	\vec{a} &= \frac{d\vec{v}}{dt} = \frac{d\vec{v}}{dx} \frac{dx}{dt} = \frac{d\vec{v}}{dx} v_x \\
+	&= \frac{k^2 y''}{(y-y'x)^3} (x,y)
+	\end{split}
+	\end{equation}
+	\paragraph{注意}
+	以上推导假设向心力来自原点
+	\subsection{推论}
+	\noindent
+	通过该公式可以得到一些有趣的结果：
+	\\若轨迹为圆锥曲线，则指向曲线焦点的向心力反比于距离的平方；
+	\\若轨迹为椭圆轨道，则指向椭圆中心的向心力正比于距离；
+	\\若轨迹为任意曲线，则仍可通过上述公式计算向心力。
+	\subsection{求指向无穷远处的力的规律}
+	想象一个类似抛物线的曲线，取力的方向为y轴，与y轴垂直的为x轴。
+	设某个时刻，物体的位置矢量为 $ \vec{r} =(x,y) $。则由水平方向不受力
+	易知 $dx / v_x = dt$ ，竖直方向有
+	\begin{equation}
+	v_y = v_x y'
+	\end{equation}
+	\begin{equation}
+	F = m a_y = m v_x \frac{y'}{dt} = m v_x \frac{dy'}{dx / v_x} = m v_x^2 y''
+	\end{equation}
+	\paragraph{推论}
+	很明显，指向无穷远处的力与二阶导数成正比。
+	显然，抛物线收到无穷远处的立为常量。
+	
+	
+	
+	\section{地球上太阳直射点的周年运动规律}
+	\subsection{结果}
+	太阳从春分点到北回归线赤经和赤纬的变化
+	\begin{equation}
+	\begin{split}
+	\varDelta L &= arctan(cos(23°26') tan(\theta_t)) \\
+	\varDelta B &= arcsin(sin(23°26') sin(\theta_t))
+	\end{split}
+	\end{equation}
+	\paragraph{注意}
+	$ \theta_t $ 表示太阳在黄道面上扫过的角度，当轨道为正圆时与时间成正比。
+	
+	
+	\section{求解椭球体上的测地线}
+	\subsection{推导}
+	
+	
+	\section{刚体在三维空间中运动表示}
+	\subsection{旋转表示}
+	\subsubsection{欧拉角}
+	依次绕坐标轴旋转，有确定顺序，我们使用右手系，想象一个飞机，以其中心为原点，前方为X轴，左方为Y轴，上方为Z轴，建立坐标系。绕X,Y,Z轴旋转角分别为roll,pitch,yaw，为了方便，我们分别将其记为 $ \theta_x,\theta_y,\theta_z $
+	\subsubsection{旋转矩阵}
+	\paragraph{基和坐标}
+	设有序向量组 $B={\beta_1,\beta_2,...,\beta_n} \subset R^n$ ，如果B线性无关，则 $R^n$ 中任一向量均可由B线性表示，即
+	\begin{equation}
+	\alpha=a_1 \beta_1 + a_2 \beta_2 + ... + a_n \beta_n
+	\end{equation}
+	就称B是$R^n$下的一组基，有序数组 $(a_1,a_2,...,a_n)$ 是向量 $\alpha$ 关于基B的坐标。记为
+	\begin{equation}
+	\alpha_B =
+	\begin{bmatrix}
+	a_1 & a_2 & ... & a_n
+	\end{bmatrix}^T
+	\end{equation}
+	\paragraph{过渡矩阵}
+	设 $R^n$ 的两组基 $B_1=[\alpha_1,\alpha_2,...,\alpha_n]$ 和 $B_2=B=[\beta_1,\beta_2,...,\beta_n]$ 满足 $B_2 = B_1 A$ ，则矩阵A称为旧基B1到新基B2的过渡矩阵（变换矩阵）。
+	\\
+	若 $B_1 x = B_2 y$ ，其中 $x,y$ 为坐标向量(列向量)，则有
+	\begin{equation}
+	p' = A^{-1} p
+	\end{equation}
+	\paragraph{二维旋转矩阵}
+	二维的旋转矩阵表示如下：
+	\begin{equation}
+	R =
+	\begin{bmatrix}
+	\cos \theta & \sin \theta \\
+	-\sin \theta & \cos \theta
+	\end{bmatrix}
+	\end{equation}
+	\uline{对于该式你可以有以下两种理解：它既可以表示坐标系旋转$\theta$角后同一点在新旧两个坐标系下的坐标变换关系，也可以表示矢量旋转了$-\theta$角(注意:逆时针为正方向)。}
+	\subsubsection{转换关系}
+	\paragraph{欧拉角和旋转矩阵}
+	对应的旋转矩阵分别为
+	\begin{equation}
+	R_x(\theta_x)=
+	\begin{bmatrix}
+	1 & 0 & 0 \\
+	0 & \cos \theta_x & \sin \theta_x \\
+	0 & -\sin \theta_x & \cos \theta_x
+	\end{bmatrix}
+	\end{equation}
+	\begin{equation}
+	R_y(\theta_y)=
+	\begin{bmatrix}
+	\cos \theta_y & 0 & -\sin \theta_y \\
+	0 & 1 & 0 \\
+	\sin \theta_y & 0 & \cos \theta_y
+	\end{bmatrix}
+	\end{equation}
+	\begin{equation}
+	R_z(\theta_z)=
+	\begin{bmatrix}
+	\cos \theta_z & \sin \theta_z & 0 \\
+	-\sin \theta_z & \cos \theta_z & 0 \\
+	0 & 0 & 1
+	\end{bmatrix}
+	\end{equation}
+	按照 Z-Y-X 的旋转顺序旋转，旋转矩阵应为
+	\begin{equation}
+	R=R_x(\theta_x) R_y(\theta_y) R_z(\theta_z)
+	\end{equation}
+	点的坐标在旋转后的变化为
+	\begin{equation}
+	p' = R p
+	\end{equation}
+	其中，$p,p'$分别为旋转前后基下的坐标。
+	\paragraph{内旋和外旋}
+	内旋指绕运动轴旋转，外旋指绕固定轴旋转。下面的两种旋转指的都是坐标系变换，不是坐标变换。
+	\\
+	绕当前坐标系的z轴旋转后的坐标变换为
+	\begin{equation}
+	p' = R_z R p = (R_z R) p
+	\end{equation}	
+	绕初始坐标系的z轴旋转后的坐标变换为
+	\begin{equation}
+	p' = R R_z R^{-1} R p = R R_z p = (R R_z) p
+	\end{equation}
+	\paragraph{坐标系变换和坐标变换}
+	(内外旋)
+	\\
+	内旋的Z-Y-X的坐标系变换为
+	\begin{equation}
+	R_{intri,frame}=R_x(\theta_x) R_y(\theta_y) R_z(\theta_z)
+	\end{equation}
+	外旋的Z-Y-X的坐标系变换为
+	\begin{equation}
+	R_{extri,frame}=R_z(\theta_z) R_y(\theta_y) R_x(\theta_x)
+	\end{equation}
+	内旋的Z-Y-X的坐标变换为
+	\begin{equation}
+	R_{extri,coord}=R_z(-\theta_z) R_y(-\theta_y) R_x(-\theta_x)
+	\end{equation}
+	外旋的Z-Y-X的坐标变换为
+	\begin{equation}
+	R_{intri,coord}=R_x(-\theta_x) R_y(-\theta_y) R_z(-\theta_z)
+	\end{equation}
+	其中,
+	\begin{equation}
+	R_{intri,frame} R_{intri,coord} = I
+	\end{equation}
+	\begin{equation}
+	R_{extri,frame} R_{extri,coord} = I
+	\end{equation}
+	
+	
+	
+	\subsection{李群和李代数 *}
+	\subsubsection{预备知识}
+	对给定的两个三维实数向量，他们的叉积可以通过下面的公式计算
+	\begin{equation}
+	u \times v =
+	\begin{bmatrix}
+	u_2 v_3 - u_3 v_2 \\
+	u_3 v_1 - u_1 v_3 \\
+	u_1 v_2 - u_2 v_1
+	\end{bmatrix}
+	\in \mathbb{R}^3
+	\end{equation}
+	我们可以把叉积通过如下方式表示：
+	\begin{equation}
+	u \times v =
+	\hat{u} v =
+	\begin{bmatrix}
+	0 & -u_3 & u_2 \\
+	u_3 & 0 & -u_1 \\
+	-u_2 & u_1 & 0
+	\end{bmatrix}
+	v
+	\end{equation}
+	\subsubsection{旋转矩阵与$so(3)$}
+	旋转矩阵有如下性质
+	\begin{equation}
+	R(t) R^T(t) = I
+	\end{equation}
+	
+	\begin{equation}
+	\dot{R}(t) R^T(t) = -(\dot{R}(t) R^T(t))^T
+	\end{equation}
+	
+	\begin{equation}
+	\dot{R}(t) = \hat{\omega}(t) R(t)
+	\end{equation}
+	
+	李代数
+	\begin{equation}
+	so(3) = \{ \hat{\omega} \in \mathbb{R}^{3\times 3} | \omega \in \mathbb{R}^3 \}
+	\end{equation}
+	
+	李群
+	\begin{equation}
+	SO(3) = \{ R \in \mathbb{R}^{3\times 3} | R^T R = I \}
+	\end{equation}
+	
+	
+	
+	
+\end{document}
