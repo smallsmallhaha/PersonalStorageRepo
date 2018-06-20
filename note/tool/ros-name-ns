@@ -1,0 +1,32 @@
+ros-nodename-and-namespace:
+
+noparam -> ros::NodeHandle n;
+nh      -> ros::NodeHandle n("nh");
+~nh     -> ros::NodeHandle n("~nh");
+/nh     -> ros::NodeHandle n("/nh");
+
+none    -> rosrun rospackage rosnode
+ns      -> rosrun rospackage rosnode __ns=ns
+name    -> rosrun rospackage rosnode __name=name
+ns+name -> rosrun rospackage rosnode __ns=ns __name=name
+
+ros::init(argc, argv, "nodename");
+中的nodename由[a1_]组成
+ros::NodeHandle n("/nh");
+中的nh以[~/a]开头，由[a1_/]组成
+n.advertise<std_msgs::String>("topic", 1000);
+中的topic以[/a]开头，由[a1_/]组成
+
+---------------------------------------------------------------------------
+            none            ns              name            ns+name
+noparam     /               /ns             /               /ns
+nh          /nh             /ns/nh          /nh             /ns/nh
+~nh         /nodename/nh    /ns/nodename/nh /name/nh        /ns/name/nh
+/nh         /nh             /nh             /nh             /nh
+---------------------------------------------------------------------------
+
+总结:
+/nh 不受任何参数影响，一直有base=/nh
+ns: /ns/base
+name: replace nodename of base
+ns+name: replace nodename of /ns/base
