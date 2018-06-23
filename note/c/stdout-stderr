@@ -1,0 +1,57 @@
+cat << EOF > main.c
+#include <sys/types.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+int main(int argc, char *argv[])
+{
+  pid_t pid;
+  fprintf(stderr, "this is stderr string!\n");
+  printf("this is stdout string!\n");
+  if ((pid = fork()) == 0)
+  {
+  }
+  else if (pid > 0)
+  {
+  }
+  exit(0);
+}
+EOF
+
+gcc main.c
+
+# 输出到终端
+./a.out
+# 结果为
+# this is stderr string!
+# this is stdout string!
+
+# 重定向到文件
+./a.out > out 2>&1
+# 结果为
+# this is stderr string!
+# this is stdout string!
+# this is stdout string!
+
+原因:
+重定向到文件时程序使用全缓冲，子进程通过fork()复制了父进程的缓冲区，子进程和父进程退出程序的时候都将缓冲区中的字符串"this is stdout string!\n"输出并清空，所以会输出两次。
+
+Define:
+1. Fully buffered means that I/O takes place only when the buffer is fully, the process explicitly calls fflush, or the process terminates by calling exit. A common size for the standard I/O buffer is 8192 bytes;
+2. Line buffered means that I/O takes place when a newline is encountered, when the process calls fflush, or when the process terminates by calling exit.
+3. Unbuffered means that I/O take place each time a standard I/O output function is called.
+
+Most unix implementations of the standard I/O libarary use the following rules.
+1. Standard error is always unbuffered.
+2. Standard input and standard output are fully buffered, unless they refer to a terminal device, in which case, they are line buffered.
+3. All other streams are fully buffered unless they refer to a terminal device, in which case, they are line buffered.
+
+Default Buffering modes:
+  stdin is always buffered;
+  stderr is always unbuffered;
+  if stdout is a terminal then buffering is automatically set to line buffered, else it is set to buffered.
+Default Buffer sizes:
+  Buffer size only directly affects buffered mode;
+  The default size like the kernel is based on the page size (4096 bytes on my system);
+  if stdin/stdout are connected to a terminal then default size = 1024; else size = 4096.
