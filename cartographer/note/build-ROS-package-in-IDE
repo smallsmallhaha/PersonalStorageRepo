@@ -1,0 +1,8 @@
+1. IDE with cmake support
+以kdevelop为例，首先打开kdevelop.desktop，在Exec=后面的程序前面加上"bash -i -c"。
+重启kdevelop，现在已经支持ROS，新建cmake项目，给cmake命令加上-DCATKIN_DEVEL_PREFIX和-DCMAKE_INSTALL_PREFIX路径即可。
+2. other IDEs
+以qt-creator为例，首先打开qt-creator.desktop，在Exec=后面的程序前面加上"bash -i -c"。
+重启qt-creator，现在已经支持ROS，新建qmake项目，在.pro文件后面加上下面两行即可:
+INCLUDEPATH += /opt/ros/kinetic/include #$$system(pkg-config --cflags roscpp std_msgs)
+LIBS += $$system(pkg-config --libs roscpp std_msgs)
