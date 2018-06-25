@@ -7,7 +7,7 @@
 [AlphaStar]
 
         comment = public archive
-        path = /opt/AlphaStar/buildANDinstall/install
+        path = /opt/AlphaStar
         use chroot = yes
 #       max connections=10
         lock file = /var/lock/rsyncd
@@ -61,6 +61,6 @@ Usages with just one SRC arg and no DEST arg will list the source files instead 
 
 --------------------- 实际应用 --------------------------
 使用ssh服务同步:
-rsync -av --delete /opt/AlphaStar/buildANDinstall/install/ ak@192.168.1.144:/opt/AlphaStar/buildANDinstall/install
+rsync -av --delete /opt/AlphaStar/ ak@192.168.1.144:/opt/AlphaStar/buildANDinstall/install
 使用rsync守护进程同步:
-rsync -av --delete /opt/AlphaStar/buildANDinstall/install/ aka@192.168.1.144::AlphaStar
+rsync -av --delete /opt/AlphaStar/ aka@192.168.1.144::AlphaStar
