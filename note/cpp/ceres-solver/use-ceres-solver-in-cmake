@@ -1,0 +1,7 @@
+find_package(Ceres REQUIRED PATHS )
+#find_package(Ceres REQUIRED PATHS <directory-contains-CeresConfig.cmake>)
+
+include_directories(${CERES_INCLUDE_DIRS})
+
+add_executable(out main.cpp)
+target_link_libraries(out ${CERES_LIBRARIES})
