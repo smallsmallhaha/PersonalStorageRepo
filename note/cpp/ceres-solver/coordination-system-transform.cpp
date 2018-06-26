@@ -1,17 +1,15 @@
-#include "ceres/ceres.h"
+#include <vector>
+#include <ceres/ceres.h>
 
 using ceres::AutoDiffCostFunction;
 using ceres::CostFunction;
 using ceres::Problem;
 using ceres::Solver;
 using ceres::Solve;
-
-const int kNumObservations = 3;
-double data[kNumObservations][4] = {
-    {0, 0, 0, 1}, {1, 0, 0, 2.1}, {1, 1, -1, 2}};
+using std::vector;
 
 struct ExponentialResidual {
-  ExponentialResidual(double* data) : data_(data) {}
+  ExponentialResidual(vector<double> data) : data_(data) {}
 
   template <typename T>
   bool operator()(const T* const transform, T* residual) const {
@@ -29,17 +27,18 @@ struct ExponentialResidual {
   }
 
  private:
-  const double* data_;
+  const vector<double> data_;
 };
 
 int main(int argc, char** argv) {
-  double transform[3] = {0, 0, 0};
+  vector<vector<double> > data = {{0, 0, 0, 1}, {1, 0, 0, 2.1}, {1, 1, -1, 2}};
+  double transform[] = {0, 0, 0};
 
   Problem problem;
-  for (int i = 0; i < kNumObservations; ++i) {
+  for (auto item : data) {
     problem.AddResidualBlock(
         new AutoDiffCostFunction<ExponentialResidual, 2, 3>(
-            new ExponentialResidual(data[i])),
+            new ExponentialResidual(item)),
         NULL, transform);
   }
 
@@ -51,8 +50,7 @@ int main(int argc, char** argv) {
   std::cout << summary.FullReport() << "\n";
   std::cout << "dx = " << transform[0] << ", dy = " << transform[1]
             << ", theta = " << transform[2] << std::endl;
-  std::cout << "error: "
-            << sqrt(summary.final_cost * 2 / (kNumObservations - 1))
+  std::cout << "error: " << sqrt(summary.final_cost * 2 / (data.size() - 1))
             << std::endl;
   return 0;
 }

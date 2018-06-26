@@ -1,4 +1,7 @@
-find_package(Ceres REQUIRED PATHS )
+# enable c++11 support
+set(CMAKE_CXX_STANDARD 11)
+
+find_package(Ceres REQUIRED)
 #find_package(Ceres REQUIRED PATHS <directory-contains-CeresConfig.cmake>)
 
 include_directories(${CERES_INCLUDE_DIRS})
