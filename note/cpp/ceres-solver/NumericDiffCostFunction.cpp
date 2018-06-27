@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
   for (auto item : data) {
     problem.AddResidualBlock(
         new NumericDiffCostFunction<
-            ExponentialResidual, NumericDiffMethodType::CENTRAL, 2, 3>(
+            ExponentialResidual, ceres::NumericDiffMethodType::CENTRAL, 2, 3>(
             new ExponentialResidual(item)),
         NULL, transform);
   }
