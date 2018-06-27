@@ -1,7 +1,7 @@
-#include <vector>
 #include <ceres/ceres.h>
+#include <vector>
 
-using ceres::AutoDiffCostFunction;
+using ceres::NumericDiffCostFunction;
 using ceres::CostFunction;
 using ceres::Problem;
 using ceres::Solver;
@@ -11,16 +11,15 @@ using std::vector;
 struct ExponentialResidual {
   ExponentialResidual(vector<double> data) : data_(data) {}
 
-  template <typename T>
-  bool operator()(const T* const transform, T* residual) const {
-    T dx = transform[0];
-    T dy = transform[1];
-    T s = sin(transform[2]);
-    T c = cos(transform[2]);
-    T x1 = T(data_[0]);
-    T y1 = T(data_[1]);
-    T x2 = T(data_[2]);
-    T y2 = T(data_[3]);
+  bool operator()(const double* const transform, double* residual) const {
+    double dx = transform[0];
+    double dy = transform[1];
+    double s = sin(transform[2]);
+    double c = cos(transform[2]);
+    double x1 = (data_[0]);
+    double y1 = (data_[1]);
+    double x2 = (data_[2]);
+    double y2 = (data_[3]);
     residual[0] = x1 * c + y1 * s + dx - x2;
     residual[1] = y1 * c - x1 * s + dy - y2;
     return true;
@@ -37,7 +36,8 @@ int main(int argc, char** argv) {
   Problem problem;
   for (auto item : data) {
     problem.AddResidualBlock(
-        new AutoDiffCostFunction<ExponentialResidual, 2, 3>(
+        new NumericDiffCostFunction<
+            ExponentialResidual, NumericDiffMethodType::CENTRAL, 2, 3>(
             new ExponentialResidual(item)),
         NULL, transform);
   }
