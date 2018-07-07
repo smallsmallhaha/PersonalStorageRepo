@@ -8,7 +8,7 @@ using ns_name::name;
 namespace name = qualified-namespace ;
 namespace ns_name::name                         (since C++17)
 
-# 命名空间别名:
+# 命名空间别名
 namespace alias_name = ns_name;
 namespace alias_name = ::ns_name;
 namespace alias_name = nested_name::ns_name;
