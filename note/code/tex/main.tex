@@ -45,7 +45,7 @@
 	\subsection{问题}
 	已知物体仅在向心力的作用下沿着给定轨迹运动，求该向心力的规律。
 	\subsection{推导}
-	设某个时刻，物体的位置矢量为 $ \vec{r} =(x,y) $，速度矢量为 $ \vec{v}=(v_x,v_y)=v_x (1,y') $，其中，$ y'=\frac{dy}{dx} $。
+	为了方便推导，我们假设向心力来自原点。设某个时刻，物体的位置矢量为 $ \vec{r} =(x,y) $，速度矢量为 $ \vec{v}=(v_x,v_y)=v_x (1,y') $，其中，$ y'=\frac{dy}{dx} $。
 	\\
 	由动量守恒知，$ \vec{r}\times\vec{v}=const $，则$ v_x\propto\frac{1}{y-y'x} $，令
 	\begin{equation} v_x=\frac{k}{y-y'x} \end{equation}
@@ -56,8 +56,6 @@
 	&= \frac{k^2 y''}{(y-y'x)^3} (x,y)
 	\end{split}
 	\end{equation}
-	\paragraph{注意}
-	以上推导假设向心力来自原点
 	\subsection{推论}
 	\noindent
 	通过该公式可以得到一些有趣的结果：
@@ -65,7 +63,8 @@
 	\\若轨迹为椭圆轨道，则指向椭圆中心的向心力正比于距离；
 	\\若轨迹为任意曲线，则仍可通过上述公式计算向心力。
 	\subsection{求指向无穷远处的力的规律}
-	想象一个类似抛物线的曲线，取力的方向为y轴，与y轴垂直的为x轴。
+	给定一个曲线，假设其只受到来自无穷远方向的力，求该力的规律。
+	取力的方向为y轴，与y轴垂直的为x轴。
 	设某个时刻，物体的位置矢量为 $ \vec{r} =(x,y) $。则由水平方向不受力
 	易知 $dx / v_x = dt$ ，竖直方向有
 	\begin{equation}
@@ -74,9 +73,9 @@
 	\begin{equation}
 	F = m a_y = m v_x \frac{y'}{dt} = m v_x \frac{dy'}{dx / v_x} = m v_x^2 y''
 	\end{equation}
-	\paragraph{推论}
-	很明显，指向无穷远处的力与二阶导数成正比。
-	显然，抛物线收到无穷远处的立为常量。
+	\paragraph{结论}
+	指向无穷远处的力与二阶导数成正比。
+	特别地，抛物线受到的力为常量。
 	
 	
 	
@@ -98,10 +97,18 @@
 	
 	
 	\section{刚体在三维空间中运动表示}
+	本章主要探究刚体上的坐标和坐标系在三维空间中的旋转变换规律。
 	\subsection{旋转表示}
 	\subsubsection{欧拉角}
-	依次绕坐标轴旋转，有确定顺序，我们使用右手系，想象一个飞机，以其中心为原点，前方为X轴，左方为Y轴，上方为Z轴，建立坐标系。绕X,Y,Z轴旋转角分别为roll,pitch,yaw，为了方便，我们分别将其记为 $ \theta_x,\theta_y,\theta_z $
-	\subsubsection{旋转矩阵}
+	想象一个飞机，以其中心为原点，向前为X轴，向左为Y轴，向上为Z轴，建立平面直角坐标系。绕X轴、Y轴、Z轴的旋转角分别被称为roll（翻滚）、pitch（俯仰）、yaw（航偏角）。为了方便，我们分别将其记为 $ \theta_x,\theta_y,\theta_z $。
+	\subsubsection{内旋和外旋}	
+	\noindent
+	连续的旋转可以分为内旋和外旋两种：
+	\\
+	外旋（extrinsic）是基于固定坐标系的旋转，旋转过程中XYZ坐标轴方向相对于外部环境不变、相对于旋转体变h化，外旋只有一个坐标系，主要考虑刚体旋转时，刚体上面的点在一个坐标系下的变换（\textbf{坐标变换}）；
+	\\
+	内旋（intrinsic）是基于移动坐标系的旋转，旋转过程中XYZ坐标轴方向相对于旋转体不变、相对于外部环境变化，内旋有多个坐标系，主要考虑同一个点在不同坐标系之间的变换（\textbf{坐标系变换}）。
+	\subsubsection{基、坐标和旋转矩阵}
 	\paragraph{基和坐标}
 	设有序向量组 $B={\beta_1,\beta_2,...,\beta_n} \subset R^n$ ，如果B线性无关，则 $R^n$ 中任一向量均可由B线性表示，即
 	\begin{equation}
@@ -114,12 +121,13 @@
 	a_1 & a_2 & ... & a_n
 	\end{bmatrix}^T
 	\end{equation}
-	\paragraph{过渡矩阵}
-	设 $R^n$ 的两组基 $B_1=[\alpha_1,\alpha_2,...,\alpha_n]$ 和 $B_2=B=[\beta_1,\beta_2,...,\beta_n]$ 满足 $B_2 = B_1 A$ ，则矩阵A称为旧基B1到新基B2的过渡矩阵（变换矩阵）。
+	\paragraph{旋转矩阵}
+	设 $R^n$ 的两组基 $B=[\beta_1,\beta_2,...,\beta_n]$ 和 $B'=[\beta '_1,\beta '_2,...,\beta '_n]$ 满足 $B' = B A$ ，则矩阵A称为旧基B1到新基B2的过渡矩阵（变换矩阵）。
 	\\
-	若 $B_1 x = B_2 y$ ，其中 $x,y$ 为坐标向量(列向量)，则有
+	同一向量在不同的基下有不同的坐标，如 $ \alpha = B \alpha_{B} = B' \alpha_{B'}$ ，其中 $\alpha_{B},\alpha_{B'}$ 为坐标向量(列向量)，则有
 	\begin{equation}
-	p' = A^{-1} p
+	\alpha_{B'} = A^{-1} \alpha_{B}
+	两个标准正交基之间的过渡矩阵一般被称为旋转矩阵。
 	\end{equation}
 	\paragraph{二维旋转矩阵}
 	二维的旋转矩阵表示如下：
@@ -131,7 +139,7 @@
 	\end{bmatrix}
 	\end{equation}
 	\uline{对于该式你可以有以下两种理解：它既可以表示坐标系旋转$\theta$角后同一点在新旧两个坐标系下的坐标变换关系，也可以表示矢量旋转了$-\theta$角(注意:逆时针为正方向)。}
-	\subsubsection{转换关系}
+	\subsubsection{欧拉角到旋转矩阵}
 	\paragraph{欧拉角和旋转矩阵}
 	对应的旋转矩阵分别为
 	\begin{equation}
@@ -166,43 +174,29 @@
 	\begin{equation}
 	p' = R p
 	\end{equation}
-	其中，$p,p'$分别为旋转前后基下的坐标。
+	其中，$p,p'$分别为旋转前后基下的坐标，因此上述进行的是\textbf{内旋}（坐标系变换）。
 	\paragraph{内旋和外旋}
-	内旋指绕运动轴旋转，外旋指绕固定轴旋转。下面的两种旋转指的都是坐标系变换，不是坐标变换。
-	\\
-	绕当前坐标系的z轴旋转后的坐标变换为
+	从上一小节可以看出，内旋（坐标系变换）只需左乘变换矩阵即可。例如，绕当前坐标系的z轴旋转后的坐标系变换为
 	\begin{equation}
-	p' = R_z R p = (R_z R) p
-	\end{equation}	
-	绕初始坐标系的z轴旋转后的坐标变换为
+	p' = R_{z,intri} R p = (R_{z,extri} R) p
+	\end{equation}
+	外旋（坐标变换）可以看成内旋的叠加，例如，绕初始坐标系的z轴旋转后的坐标变换是以下坐标系变换的叠加：变换回原始坐标系->绕z轴旋转->从原始坐标系变换回来，可以用公式表示为
 	\begin{equation}
 	p' = R R_z R^{-1} R p = R R_z p = (R R_z) p
 	\end{equation}
+	可以看出，内旋左乘旋转矩阵，外旋右乘旋转矩阵。
 	\paragraph{坐标系变换和坐标变换}
-	(内外旋)
-	\\
-	内旋的Z-Y-X的坐标系变换为
-	\begin{equation}
-	R_{intri,frame}=R_x(\theta_x) R_y(\theta_y) R_z(\theta_z)
-	\end{equation}
-	外旋的Z-Y-X的坐标系变换为
+	内旋Z-Y-X的变换为
 	\begin{equation}
 	R_{extri,frame}=R_z(\theta_z) R_y(\theta_y) R_x(\theta_x)
 	\end{equation}
-	内旋的Z-Y-X的坐标变换为
-	\begin{equation}
-	R_{extri,coord}=R_z(-\theta_z) R_y(-\theta_y) R_x(-\theta_x)
-	\end{equation}
-	外旋的Z-Y-X的坐标变换为
+	外旋Z-Y-X的变换为
 	\begin{equation}
 	R_{intri,coord}=R_x(-\theta_x) R_y(-\theta_y) R_z(-\theta_z)
 	\end{equation}
 	其中,
 	\begin{equation}
 	R_{intri,frame} R_{intri,coord} = I
-	\end{equation}
-	\begin{equation}
-	R_{extri,frame} R_{extri,coord} = I
 	\end{equation}
 	
 	
