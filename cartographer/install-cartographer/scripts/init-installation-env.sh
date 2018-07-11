@@ -86,9 +86,9 @@ else
     1 )
       create_ros_install_dir "${CUSTOM_ROS_BUILD_DIR}"
       add_source_setup_to_bashrc
-      break;;
+      ;;
     2 )
-      break;;
+      ;;
     * )
       echo "Please select a valid option."
       ;;
