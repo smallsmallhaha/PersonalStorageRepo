@@ -12,6 +12,8 @@
 \usepackage{listings}
 % math font and formula
 \usepackage{amsmath}
+\renewcommand{\vec}[1]{\boldsymbol{#1}} % Uncomment for BOLD vectors.
+
 \usepackage{amsfonts}
 
 \usepackage{CJKulem}
@@ -371,6 +373,149 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	\end{equation}
 	
 	
+	\section{全景相片拼接}
+	记像素点坐标为p，校正后像片内参为K，像空间辅助坐标系和世界坐标系间的变换为R和t。
+	\begin{equation}
+	sp=K(RW+t)
+	\end{equation}
 	
+	把$K^{-1}$移到左边，得到
+	\begin{equation}
+	sK^{-1}p=RW+t
+	\end{equation}
+	
+	令$P=K^{-1}p$，则
+	\begin{equation}
+	sP=RW+t \label{camera_base}
+	\end{equation}
+	
+	\subsection{推导一}
+	由$P$的最后一行为1可知，
+	\begin{equation}
+	s=R^{(3)}W+t^{(3)}
+	\end{equation}
+	
+	代入公式（\ref{camera_base}）可知
+	\begin{equation}
+	(PR^{(3)}-R)W=t-Pt^{(3)} \label{wrong_label}
+	\end{equation}
+	
+	对于左右两个相机，有
+	\begin{equation}
+	(P_1 R_1^{(3)} - R_1)(t_2 - P_2 t_2^{(3)})=
+	(P_2 R_2^{(3)} - R_2)(t_1 - P_1 t_1^{(3)})
+	\end{equation}
+	
+	该公式中，除了$P_2$是待求量，其它全都是已知的。
+	不妨记$k1=R_2^{(3)} (t_1 - P_1 t_1^{(3)})$，$C=P_1 R_1^{(3)} - R_1$，$k2=t_2^{(3)$，$V=(P_1 R_1^{(3)} - R_1)t_2 + R_2(t_1 - P_1 t_1^{(3)})$，则上式可化简为
+	\begin{equation}
+	P_2 k_1 + C P_2 k_2 = V
+	\end{equation}
+	
+	考虑到$k_1$ $k_2$都是1x1方阵，可以看成实数，公式可以进一步化简为
+	\begin{equation}
+	(k_1 E + k_2 C ) P_2 = V
+	\end{equation}	
+	
+	求解上式可得$P_2$坐标。
+	
+	很遗憾地发现，上述推导从公式（\ref{wrong_label}）开始就是错的，W无法被消去。
+	
+	\subsection{推导二}
+	本推导的目的是通过公式（\ref{camera_base}）将像片上的像点坐标投影到虚拟像空间坐标系，从而进一步投影到圆柱面或球面，生成全景影像。
+	设虚拟像空间坐标系表示为$R',t'$，相片的像空间辅助坐标系表示为$R, t$，则由公式（\ref{camera_base}）可以得到
+	\begin{equation}
+	W = R^{-1} (P - t) = R'^{-1} (P' - t') \label{quanjingpinjie}
+	\end{equation}
+	上式中的$P$对应于于公式（\ref{camera_base}）中的$sP$，是像空间辅助坐标系下的坐标。
+	因此有
+	\begin{equation}
+	P = s K^{-1} p \label{image_to_xyz}
+	\end{equation}
+		
+	将公式（\ref{image_to_xyz}）代入公式（\ref{quanjingpinjie}），得到
+	\begin{equation}
+	P' = R' R^{-1} (s K^{-1} p - t) + t'
+	\end{equation}
+	
+	记$\vec{v_1} = R' R^{-1} K^{-1} p = \begin{bmatrix}
+	a & b & c
+	\end{bmatrix}' $，$\vec{v_2} = t' - R' R^{-1} t = \begin{bmatrix}
+	m & n & o
+	\end{bmatrix}'$，则最终可以得到公式
+	\begin{equation} \label{get_P_}
+	P' = s
+	\begin{bmatrix}
+	a \\ b \\ c
+	\end{bmatrix}
+	+
+	\begin{bmatrix}
+	m \\ n \\ o
+	\end{bmatrix}	
+	\end{equation}
+	
+	在圆柱面投影中，结合公式${P'}_x^2 + {P'}_y^2 = R^2$可以得到一个一元二次方程。该方程必然有正负两个解，负解舍去，正解为
+	\begin{equation}
+	\begin{split}
+	s
+	&= \frac{\sqrt{(\vec{v_1}\cdot\vec{v_2})^2 - \vec{v_1}^2(\vec{v_2}^2-R^2)} - \vec{v_1}\cdot\vec{v_2}}{\vec{v_1}^2} \\
+	&= \frac{\sqrt{(am+bn)^2-(a^2+b^2)(m^2+n^2-R^2)}-(am+bn)}{a^2+b^2} \\
+	&= \frac{\sqrt{(a^2+b^2)R^2 - (an-bm)^2}-(am+bn)}{a^2+b^2}
+	\end{split}
+	\end{equation}
+	
+	在球面投影中，结合公式式${P'}_x^2 + {P'}_y^2 + {P'}_z^2 = R^2$可以得到一个一元二次方程。该方程必然有正负两个解，负解舍去，正解为
+	\begin{equation}
+	\begin{split}
+	s
+	&= \frac{\sqrt{(\vec{v_1}\cdot\vec{v_2})^2 - \vec{v_1}^2(\vec{v_2}^2-R^2)} - \vec{v_1}\cdot\vec{v_2}}{\vec{v_1}^2} \\
+	&=\frac{\sqrt{(a m+b n+c o)^2-(a^2+b^2+c^2) (m^2+n^2+o^2-R^2)}-(am+bn+co)}{a^2+b^2+c^2}
+	\end{split}
+	\end{equation}
+	
+	\subsection{误差来源}
+	\subsubsection{投影差}
+	从上面的推导可以知道，虚拟坐标系原点和像素对应的空间点的距离被假定成了R，这会导致距离并非R的像素点在每张图片上都有一个投影偏移，这种偏移在拼接中更为致命：若真实距离大于R，则两个相片拼接重合的部分将偏多，否则偏少。
+	\par
+	事实上，鉴于R都是假定的，我们甚至可以假设$P_x^2 + P_y^2 = R^2$，这样我们可以直接算出s的值，进一步通过公式（\ref{get_P_}），得到P'点的坐标。
+	
+	
+	
+	\section{图像特征描述子}
+	\subsection{SIFT}
+	\subsubsection{高斯模糊}
+	高斯卷积核函数：
+	\begin{equation}
+	G(x,y,\rho)=\frac{1}{2 \pi \sigma^2} exp\left(-\frac{x^2+y^2}{2\sigma^2}\right)
+	\end{equation}
+	\par
+	高斯卷积核的大小根据$\sigma$确定，一般是奇数维的方阵，方阵半径不超过$[3\sigma]+1$（含中心）。
+	\par 高斯模糊具有线性可分的性质，可以在二维图像上对两个独立的一维空间分别进行计算，可以大大减少运算次数。
+	\subsubsection{高斯金字塔}
+	高斯金字塔的构建过程可以分为两步：高斯平滑、降采样。
+	高斯金字塔共o组、s层，则有
+	\begin{equation}
+	\sigma(s)=\sigma_0 2^{s/S}
+	\end{equation}
+	公式中的$\sigma$是尺度空间坐标，$s$是层的坐标，$\sigma_0$是初始尺度，$S$是每组的层数。
+	\par 高斯金字塔的组内和组间尺度可以归为：
+	\begin{equation}
+	2^{i-1} (\rho,k\rho,k^2\rho,...,k^{n-1}\rho),
+	k=2^{1/S}
+	\end{equation}
+	\subsubsection{关键点检测:DoG}
+	高斯拉普拉斯算子
+	\begin{equation}
+	LOG(x,y,\rho)=\rho^2 \nabla^2 G
+	\end{equation}
+	高斯差分算子
+	\begin{equation}
+	D(x,y,\rho)=\left(G(x,y,k\rho)-G(x,y,\rho)\right)*I(x,y)
+	\end{equation}
+	\subsubsection{DoG的局部极值检测}
+	
+	\subsubsection{关键点方向分配}
+	
+	\subsubsection{关键点描述}
 	
 \end{document}
