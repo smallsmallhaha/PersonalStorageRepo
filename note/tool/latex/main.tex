@@ -518,4 +518,47 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	
 	\subsubsection{关键点描述}
 	
+	
+	
+	\section{矩阵求导表示}
+	\subsection{布局}
+	矩阵求导有两种布局，分子布局(numerator layout)和分母布局(denominator layout)。
+	分子布局的导数矩阵布局与分母相同（别问我为啥这样起名字，我也不知道）。
+	/par 如无特别说明，下面应用的都是分子布局。	
+	\subsection{基本求导规则}
+	\subsubsection{基本类型}
+	\par 已知标量$s$、$m$维向量$\boldsymbol{x}$、$n$维向量$\boldsymbol{y}$、$s\times t$维矩阵$\boldsymbol{A}$，则有以下基本求导形式：
+	
+	\par 向量对标量求导$m\times 1$
+	\begin{equation}
+	\frac{\partial\boldsymbol{x}}{\partial s}
+	\end{equation}
+	
+	\par 标量对向量求导$1\times m$
+	\begin{equation}
+	\frac{\partial s}{\partial\boldsymbol{x}}
+	\end{equation}
+	
+	\par 向量对向量求导$m\times n$
+	\begin{equation}
+	\frac{\partial\boldsymbol{x}}{\partial\boldsymbol{y}}
+	\end{equation}
+	
+	\par 矩阵对标量求导$s\times t$
+	\begin{equation}
+	\frac{\partial\boldsymbol{A}}{\partial s}
+	\end{equation}
+	
+	\par 标量对矩阵求导$t\times s$（？？）
+	\begin{equation}
+	\frac{\partial s}{\partial\boldsymbol{A}}
+	\end{equation}
+	
+	\subsubsection{推论}
+	\begin{equation}
+	\frac{\partial \boldsymbol{Ax}}{\partial \boldsymbol{y}}
+	=
+	A \frac{\partial \boldsymbol{x}}{\partial \boldsymbol{y}}
+	\end{equation}
+	
 \end{document}
