@@ -24,6 +24,11 @@ using ceres::Solver;
 using ceres::Solve;
 using std::vector;
 
+// 模板参数说明:
+// 2: 残差个数，对应于 residuals[0] residuals[1]
+// 2: 参数块1中的参数个数，对应于 parameters[0][0] parameters[0][1]
+// 1: 参数块2中的参数个数，对应于  parameters[1][0]
+// 上面三个模板参数决定了雅克比矩阵的书写形式
 class CustomSizedCostFunction : public SizedCostFunction<2, 2, 1> {
  public:
   CustomSizedCostFunction(const double x, const double y, const double x1,
@@ -43,6 +48,8 @@ class CustomSizedCostFunction : public SizedCostFunction<2, 2, 1> {
     if (!jacobians || !jacobians[0]) return true;
 
     // 参数块1，参数个数为2
+    // 该Jacobian矩阵表示为一维向量，依次为：
+    // 残差1对各参数的导数、残差2对各参数的导数、...
     // D_dx(f1)
     jacobians[0][0] = 1;
     // D_dy(f1)
@@ -52,7 +59,9 @@ class CustomSizedCostFunction : public SizedCostFunction<2, 2, 1> {
     // D_dy(f2)
     jacobians[0][3] = 1;
 
-    // 参数块1，参数个数为2
+    // 参数块2，参数个数为1
+    // 该Jacobian矩阵表示为一维向量，依次为：
+    // 残差1对各参数的导数、...
     // D_theta(f1)
     jacobians[1][0] = -x_ * sin(theta) + y_ * cos(theta);
     // D_theta(f2)
