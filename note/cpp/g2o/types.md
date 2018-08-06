@@ -43,11 +43,14 @@ class OptimizableGraph::Edge : public HyperGraph::Edge, public HyperGraph::DataC
 // E : 边的观测值类型
 template <int D, typename E>
 class BaseEdge : public OptimizableGraph::Edge {
-  // 观测值，类型为E
+  typedef E Measurement;
+  typedef Eigen::Matrix<double, D, 1, Eigen::ColMajor> ErrorVector;
+  typedef Eigen::Matrix<double, D, D, Eigen::ColMajor> InformationType;
+  // 观测值，类型为E，标量
   Measurement _measurement;
   // 信息矩阵，类型为D维方阵
   InformationType _information;
-  // 误差向量，类型为N维列向量
+  // 误差向量，类型为D维列向量
   ErrorVector _error;
 }
 
@@ -69,7 +72,7 @@ class OptimizableGraph::Vertex : public HyperGraph::Vertex, public HyperGraph::D
   OptimizableGraph* _graph;
   // 用户数据
   Data* _userData;
-  // 顶点在海森矩阵中的索引
+  // 顶点在海塞矩阵中的索引
   int _hessianIndex;
   // 顶点数据是否固定
   bool _fixed;
@@ -77,10 +80,10 @@ class OptimizableGraph::Vertex : public HyperGraph::Vertex, public HyperGraph::D
   bool _marginalized;
   // 海塞方阵和_b向量的维度
   int _dimension;
-  // 顶点在海森矩阵中的列索引
+  // 顶点在海塞矩阵中的列索引
   int _colInHessian;
 
-  // 获得海森矩阵数据
+  // 获得海塞矩阵数据
   virtual number_t* hessianData() = 0;
   // ?
   virtual number_t solveDirect(number_t lambda=0) = 0;
@@ -97,7 +100,10 @@ class OptimizableGraph::Vertex : public HyperGraph::Vertex, public HyperGraph::D
 
 template <int D, typename T>
 class BaseVertex : public OptimizableGraph::Vertex {
-  // 海森矩阵，类型为D维方阵
+  typedef T EstimateType;
+  typedef std::stack<EstimateType, std::vector<EstimateType, Eigen::aligned_allocator<EstimateType> > > BackupStackType;
+  typedef Eigen::Map<Eigen::Matrix<double, D, D, Eigen::ColMajor>, Eigen::Matrix<double, D, D, Eigen::ColMajor>::Flags & Eigen::AlignedBit ? Eigen::Aligned : Eigen::Unaligned > HessianBlockType;
+  // 海塞矩阵，类型为D维方阵
   HessianBlockType _hessian;
   // _b矩阵，类型为D维列向量
   Eigen::Matrix<number_t, D, 1, Eigen::ColMajor> _b;
