@@ -79,12 +79,15 @@ class CERES_EXPORT LocalParameterization {
   // 自定义Plus函数
   //   x_plus_delta = Plus(x, delta)
   // 条件: Plus(x, 0) = x
+  // 用途: 已知 x delta，计算 x_plus_delta
   virtual bool Plus(const double* x,
                     const double* delta,
                     double* x_plus_delta) const = 0;
 
   // 计算 Plus(x, delta) 在 delta=0 处的雅克比矩阵
-  // 雅克比矩阵是一个行优先，大小为 GlobalSize x LocalSize
+  // 雅克比矩阵行优先，大小为 GlobalSize x LocalSize
+  // 用途: 已知 delta_x 的情况下计算 delta，公式为 delta = delta_x * jacobian，
+  //      delta 是由非线性优化方法计算得到的。
   virtual bool ComputeJacobian(const double* x, double* jacobian) const = 0;
 
   // local_matrix = global_matrix * jacobian
@@ -108,7 +111,7 @@ class CERES_EXPORT LocalParameterization {
 
 // Some basic parameterizations
 
-// Identity Parameterization: Plus(x, delta) = x + delta
+// Plus(x, delta) = x + delta
 class CERES_EXPORT IdentityParameterization : public LocalParameterization {
  public:
   explicit IdentityParameterization(int size);
@@ -129,7 +132,8 @@ class CERES_EXPORT IdentityParameterization : public LocalParameterization {
   const int size_;
 };
 
-// Hold a subset of the parameters inside a parameter block constant.
+// 让子集中的一部分为常量
+// 常量的下标储存在 constancy_mask_ 中
 class CERES_EXPORT SubsetParameterization : public LocalParameterization {
  public:
   explicit SubsetParameterization(int size,
@@ -155,9 +159,7 @@ class CERES_EXPORT SubsetParameterization : public LocalParameterization {
 };
 
 // Plus(x, delta) = [cos(|delta|), sin(|delta|) delta / |delta|] * x
-// with * being the quaternion multiplication operator. Here we assume
-// that the first element of the quaternion vector is the real (cos
-// theta) part.
+// 四元数，顺序为 w x y z，Plus()中的delta是轴角的二分之一
 class CERES_EXPORT QuaternionParameterization : public LocalParameterization {
  public:
   virtual ~QuaternionParameterization() {}
@@ -170,17 +172,8 @@ class CERES_EXPORT QuaternionParameterization : public LocalParameterization {
   virtual int LocalSize() const { return 3; }
 };
 
-// Implements the quaternion local parameterization for Eigen's representation
-// of the quaternion. Eigen uses a different internal memory layout for the
-// elements of the quaternion than what is commonly used. Specifically, Eigen
-// stores the elements in memory as [x, y, z, w] where the real part is last
-// whereas it is typically stored first. Note, when creating an Eigen quaternion
-// through the constructor the elements are accepted in w, x, y, z order. Since
-// Ceres operates on parameter blocks which are raw double pointers this
-// difference is important and requires a different parameterization.
-//
 // Plus(x, delta) = [sin(|delta|) delta / |delta|, cos(|delta|)] * x
-// with * being the quaternion multiplication operator.
+// Eigen库中的四元数，顺序为 x y z w，Plus()中的delta是轴角的二分之一
 class CERES_EXPORT EigenQuaternionParameterization
     : public ceres::LocalParameterization {
  public:

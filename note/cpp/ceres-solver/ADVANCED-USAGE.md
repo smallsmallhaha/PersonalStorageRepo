@@ -44,6 +44,10 @@ void SetParameterLowerBound(double* values, int index, double lower_bound);
 void SetParameterUpperBound(double* values, int index, double upper_bound);
 ```
 
+### 注意
+在Ceres中有些参数块的更新需要自己定义。例如，若一个参数块表示四元数，那么对它的更新不能直接使用简单的加法，用户可以继承 ceres::LocalParameterization 类，实现其中的Plus()和ComputeJacobian()函数。  
+详见 LocalParameterization.md。
+
 ## ParameterBlock类
 ```cpp
 // 参数块大小
