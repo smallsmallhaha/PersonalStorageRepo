@@ -565,23 +565,23 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	
 	\section{loam 算法的李代数形式推导}
 	loam是CMU张博士提出的一种基于特征的ICP算法，主要使用线特征和面特征两种。
-	\subsection{已知条件}
+	\subsection{局部优化}
 	已知点云$P_1$和$P_2$和点云之间的初始位姿，优化位姿。
 	\par 提示，通过"点-直线"和"点-面"距离最小化进行匹配。
-	\subsection{点-直线距离最小化}
-	已知初始位姿的李代数为$\xi$，对于$\forall p \in P_1$，有对应点$p_2,p_2 \in P_1$构成直线，使得点$p$到直线$p_1p_2$的距离最短。距离用向量表示如下
+	\subsubsection{点-直线距离最小化}
+	已知初始位姿的李代数为$\xi$，对于$\forall p \in P_1$，有对应点$p_1,p_2 \in P_2$构成直线，使得点$p$到直线$p_1p_2$的距离最短。距离（实际上是距离的2倍）用向量表示如下
 	\begin{equation}
 	d_{\epsilon} =
 	\frac{|\vec{p p_1} \times \vec{p p_2}|}{|\vec{p_1 p_2}|}
 	\end{equation}
-	用李代数表示如下（考虑了正负号）
+	用李代数表示如下（正负号无影响）
 	\begin{equation}
 	d_{\epsilon} =
 	\frac{(p_1-e(\xi ^\wedge)p) 
 		^\wedge 
 		(p_2-e(\xi ^\wedge)p)}{|\vec{p_1 p_2}|}
 	\end{equation}
-	\par 记$p'=e(\xi ^\wedge)p, f=(p_1-e(\xi ^\wedge)p) ^\wedge (p_2-e(\xi ^\wedge)p)$，使用李代数扰动模型求导，可以得到
+	\par 记$p'=e(\xi ^\wedge)p$，$p'_1=p_1-p'$，$p'_2=p_2-p'$，$f=(p_1-e(\xi ^\wedge)p) ^\wedge (p_2-e(\xi ^\wedge)p)$，使用李代数扰动模型求导，可以得到
 	\begin{equation}
 	\begin{split}
 	\frac{\partial f}{\partial \delta \xi}
@@ -607,8 +607,43 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	&=
 	- (p_1-p')^\wedge p'^\wedge - (p_2-p')^\wedge p'^\wedge \\
 	&=
-	(2 p' - p_1 - p_2)^\wedge p'^\wedge
+	- (p'_1 - p'_2)^\wedge p'^\wedge
 	\end{split}
 	\end{equation}
+	
+	\subsubsection{点-面距离最小化}
+	已知初始位姿的李代数为$\xi$，对于$\forall p \in P_1$，有对应点$p_1,p_2,p_3 \in P_2$构成平面，使得点$p$到平面$p_1p_2p_3$的距离最短。距离（实际上是距离的6倍）用向量表示如下
+	\begin{equation}
+	d_{\epsilon} =
+	\frac{|(\vec{p p_1} \times \vec{p p_2}) \cdot \vec{p p_3}|}{|\vec{p_1 p_2 p_3}|}
+	\end{equation}
+	用李代数表示如下（正负号无影响）
+	\begin{equation}
+	d_{\epsilon} =
+	\frac{
+		(p_3-e(\xi ^\wedge)p)
+		^{+}(
+		(p_1-e(\xi ^\wedge)p) 
+		^\wedge 
+		(p_2-e(\xi ^\wedge)p))
+		}{|\vec{p_1 p_2 p_3}|}
+	\end{equation}
+	\par 记$p'=e(\xi ^\wedge)p$，$p'_1=p_1-p'$，$p'_2=p_2-p'$，$p'_3=p_3-p'$，$h=(p_3-e(\xi ^\wedge)p)
+	^{+}(
+	(p_1-e(\xi ^\wedge)p) 
+	^\wedge 
+	(p_2-e(\xi ^\wedge)p))$，使用李代数扰动模型求导，可以得到
+	\begin{equation}
+	\begin{split}
+	\frac{\partial h}{\partial \delta \xi}
+	&=
+	(({p'}_1^\wedge p'_2)^{+} - {p'}_3^{+} {p'}_2^\wedge + {p'}_3^{+} {p'}_1^\wedge) p'^\wedge \\
+	&=
+	(({p'}_1^\wedge p'_2)^{+} p'^\wedge + {p'}_3^{+} ({p'}_1-{p'}_2)^\wedge p'^\wedge
+	\end{split}
+	\end{equation}
+	
+	\subsection{全局优化}
+	
 
 \end{document}
