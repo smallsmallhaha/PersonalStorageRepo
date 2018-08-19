@@ -566,6 +566,44 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	\section{loam 算法的李代数形式推导}
 	\newcommand{\vecba}[1]{\boldmath\overrightarrow{#1}\unboldmath}
 	loam是CMU张博士提出的一种基于特征的ICP算法，主要使用线特征和面特征两种。
+	\subsection{记号和推导说明}
+	为了简化推导，本文主要使用三种记号: $+,\wedge,\odot$，意义如下：
+	\begin{equation}
+	p^+=\begin{bmatrix}
+	p_1 & 0 & 0 \\
+	0 & p_2 & 0 \\
+	0 & 0 & p_3
+	\end{bmatrix}
+	\end{equation}
+
+	\begin{equation}
+	p^\wedge=\begin{bmatrix}
+	0 & -p_3 & p_2 \\
+	p_3 & 0 & -p_1 \\
+	-p_2 & p_1 & 0
+	\end{bmatrix}
+	\end{equation}
+
+	\begin{equation}
+	\xi^\wedge
+	=\begin{bmatrix}
+	\phi \\ \rho
+	\end{bmatrix}^\wedge
+	=\begin{bmatrix}
+	\phi^\wedge & \rho \\
+	0 & 0
+	\end{bmatrix}
+	\end{equation}
+
+	\begin{equation}
+	p^\odot=\begin{bmatrix}
+	I_{3\times3} & -p^\wedge
+	\end{bmatrix}
+	\end{equation}
+	
+	\par 可以注意到，$\wedge$符号使用了两次，一个作用于三维向量得到反对称矩阵，一个作用于李代数扰动增量得到雅克比矩阵。
+	\par 此外，下面的推导中隐含有齐次坐标和非齐次坐标之间的转换，为了简便起见，不一一说明。
+	
 	\subsection{前端}
 	已知点云$P_1$和$P_2$和点云之间的初始位姿，通过"点-直线"和"点-面"距离最小化进行位姿优化。
 	\subsubsection{点-直线距离最小化}
@@ -577,9 +615,7 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	用李代数表示如下
 	\begin{equation}
 	\vecba{d_{\epsilon}} =
-	\frac{(p_1-e(\xi ^\wedge)p) 
-		^\wedge 
-		(p_2-e(\xi ^\wedge)p)}{|\vecba{p_1 p_2}|}
+	\frac{(p_1-e(\xi ^\wedge)p)^\wedge(p_2-e(\xi ^\wedge)p)}{|\vecba{p_1 p_2}|}
 	\end{equation}
 	\par 记$p'=e(\xi ^\wedge)p$，$f=(p_1-e(\xi ^\wedge)p) ^\wedge (p_2-e(\xi ^\wedge)p)$，使用李代数扰动模型求导，可以得到
 	\begin{equation}
@@ -620,13 +656,7 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	用李代数表示如下
 	\begin{equation}
 	\vecba{d_{\epsilon}} =
-	\frac{
-		(p_3-e(\xi ^\wedge)p)
-		^{+}(
-		(p_1-e(\xi ^\wedge)p) 
-		^\wedge 
-		(p_2-e(\xi ^\wedge)p))
-		}{|S_{p_1 p_2 p_3}|}
+	\frac{(p_3-e(\xi ^\wedge)p)^{+}((p_1-e(\xi ^\wedge)p)^\wedge(p_2-e(\xi ^\wedge)p))}{|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	\par 记$p'=e(\xi ^\wedge)p$，$p'_1=p_1-p'$，$p'_2=p_2-p'$，$p'_3=p_3-p'$，$h=(p_3-e(\xi ^\wedge)p)
 	^{+}(
