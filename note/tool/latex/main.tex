@@ -685,18 +685,18 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	\begin{equation}
 	\frac{\partial \vecba{d_{\epsilon}}}{\partial\delta\xi}
 	=
-	\frac{(p_2-p_1)^\wedge(e(\xi^\wedge)p)^\odot}{\vecba{p_2p_2}}
+	\frac{(p_2-p_1)^\wedge(e(\xi^\wedge)p)^\odot}{|\vecba{p_2p_2}|}
 	\end{equation}
 	
 	\par "点-面"可以使用下面的公式
 	\begin{equation}
 	\vecba{d_{\epsilon}} =
-	\frac{(p_2-p_1)^{+}(p_3-p_1)^\wedge(e(\xi ^\wedge)p-p_1)}{|S_{p_1 p_2 p_3}|}
+	\frac{(p_3-p_1)^{+}(p_2-p_1)^\wedge(e(\xi ^\wedge)p-p_1)}{|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	\begin{equation}
 	\frac{\partial \vecba{d_{\epsilon}}}{\partial\delta\xi}
 	=
-	\frac{(p_2-p_1)^{+}(p_3-p_1)^\wedge(e(\xi ^\wedge)p)^\odot}{|S_{p_1 p_2 p_3}|}
+	\frac{(p_3-p_1)^{+}(p_2-p_1)^\wedge(e(\xi ^\wedge)p)^\odot}{|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	
 	\subsubsection{注意}
