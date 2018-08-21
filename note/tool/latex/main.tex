@@ -699,6 +699,28 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	\frac{(p_3-p_1)^{+}(p_2-p_1)^\wedge(e(\xi ^\wedge)p)^\odot}{|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	
+	\par MATLAB代码推导
+	\begin{lstlisting}{language=Matlab}
+	syms x0 y0 z0
+	syms x10 y10 z10 real
+	syms x12 y12 z12
+	syms x13 y13 z13
+	
+	% D means 'diag', S means 'skew', d means 'delta'
+	Dd13 = diag([x13 y13 z13]);
+	Sd12 = [0 -z12 y12; z12 0 -x12; -y12 x12 0];
+	S0 = [0 -z0 y0; z0 0 -x0; -y0 x0 0];
+	d10 = [x10 y10 z10]';
+	
+	disp('point-line')
+	J = Sd12 * [eye(3) -S0]
+	r = Sd12 * d10
+	
+	disp('point-plane')
+	J = Dd13 * J
+	r = Dd13 * r
+	\end{lstlisting}
+	
 	\subsubsection{注意}
 	上面公式中的$\vecba{d_\epsilon}$表示误差向量，${\partial \vecba{d_{\epsilon}}}/{\partial\delta\xi}$表示误差向量相对于李代数增量$\delta\xi$的偏导（雅克比矩阵）。利用误差项和雅克比矩阵，使用LM方法，可以迭代得出位姿估计值。
 	
