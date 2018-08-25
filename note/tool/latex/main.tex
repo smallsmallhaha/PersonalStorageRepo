@@ -597,17 +597,17 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 
 	\begin{equation}
 	p^\odot=\begin{bmatrix}
-	I_{3\times3} & -p^\wedge
+	-p^\wedge & I_{3\times3}
 	\end{bmatrix}
 	\end{equation}
 	
 	\par 可以注意到，$\wedge$符号使用了两次，一个作用于三维向量得到反对称矩阵，一个作用于李代数扰动增量得到雅克比矩阵。
 	\par 此外，下面的推导中隐含有齐次坐标和非齐次坐标之间的转换，为了简便起见，不一一说明。
 	
-	\subsection{前端}
-	已知点云$P_1$和$P_2$和点云之间的初始位姿，通过"点-直线"和"点-面"距离最小化进行位姿优化。
+	\subsection{LaserOdometry}
+	已知相邻两帧点云$P_1$和$P_2$之间的初始位姿，通过"点-直线"和"点-面"距离最小化进行位姿优化。
 	\subsubsection{点-直线距离最小化}
-	已知初始位姿的李代数为$\xi$，对于$\forall p \in P_1$，有对应点$p_1,p_2 \in P_2$构成直线，使得点$p$到直线$p_1p_2$的距离最短，该距离（实际上是距离的2倍）用向量表示如下
+	已知初始位姿的李代数为$\xi$，对于$\forall p \in P_1$，有对应点$p_1,p_2 \in P_2$构成直线，使得点$p$到直线$p_1p_2$的距离最短，该距离用向量表示如下
 	\begin{equation}
 	d_{\epsilon} =
 	\frac{|\vecba{p p_1} \times \vecba{p p_2}|}{|\vecba{p_1 p_2}|}
@@ -648,15 +648,15 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	\end{equation}
 	
 	\subsubsection{点-面距离最小化}
-	已知初始位姿的李代数为$\xi$，对于$\forall p \in P_1$，有对应点$p_1,p_2,p_3 \in P_2$构成平面，使得点$p$到平面$p_1p_2p_3$的距离最短，该距离（实际上是距离的6倍）用向量表示如下
+	已知初始位姿的李代数为$\xi$，对于$\forall p \in P_1$，有对应点$p_1,p_2,p_3 \in P_2$构成平面，使得点$p$到平面$p_1p_2p_3$的距离最短，该距离用向量表示如下
 	\begin{equation}
 	d_{\epsilon} =
-	\frac{|(\vecba{p p_1} \times \vecba{p p_2}) \cdot \vecba{p p_3}|}{|S_{p_1 p_2 p_3}|}
+	\frac{|(\vecba{p p_1} \times \vecba{p p_2}) \cdot \vecba{p p_3}|}{3|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	用李代数表示如下
 	\begin{equation}
 	\vecba{d_{\epsilon}} =
-	\frac{(p_3-e(\xi ^\wedge)p)^{+}((p_1-e(\xi ^\wedge)p)^\wedge(p_2-e(\xi ^\wedge)p))}{|S_{p_1 p_2 p_3}|}
+	\frac{(p_3-e(\xi ^\wedge)p)^{+}((p_1-e(\xi ^\wedge)p)^\wedge(p_2-e(\xi ^\wedge)p))}{3|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	\par 记$p'=e(\xi ^\wedge)p$，$p'_1=p_1-p'$，$p'_2=p_2-p'$，$p'_3=p_3-p'$，$h=(p_3-e(\xi ^\wedge)p)
 	^{+}(
@@ -691,12 +691,12 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	\par "点-面"可以使用下面的公式
 	\begin{equation}
 	\vecba{d_{\epsilon}} =
-	\frac{(p_3-p_1)^{+}(p_2-p_1)^\wedge(e(\xi ^\wedge)p-p_1)}{|S_{p_1 p_2 p_3}|}
+	\frac{(p_3-p_1)^{+}(p_2-p_1)^\wedge(e(\xi ^\wedge)p-p_1)}{3|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	\begin{equation}
 	\frac{\partial \vecba{d_{\epsilon}}}{\partial\delta\xi}
 	=
-	\frac{(p_3-p_1)^{+}(p_2-p_1)^\wedge(e(\xi ^\wedge)p)^\odot}{|S_{p_1 p_2 p_3}|}
+	\frac{(p_3-p_1)^{+}(p_2-p_1)^\wedge(e(\xi ^\wedge)p)^\odot}{3|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	
 	\par MATLAB代码推导
@@ -713,7 +713,7 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	d10 = [x10 y10 z10]';
 	
 	disp('point-line')
-	J = Sd12 * [eye(3) -S0]
+	J = Sd12 * [-S0 eye(3)]
 	r = Sd12 * d10
 	
 	disp('point-plane')
@@ -724,7 +724,27 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	\subsubsection{注意}
 	上面公式中的$\vecba{d_\epsilon}$表示误差向量，${\partial \vecba{d_{\epsilon}}}/{\partial\delta\xi}$表示误差向量相对于李代数增量$\delta\xi$的偏导（雅克比矩阵）。利用误差项和雅克比矩阵，使用LM方法，可以迭代得出位姿估计值。
 	
-	\subsection{后端优化}
+	\subsection{LaserMapping}
+	LaserOdometry对相邻两帧之间进行匹配，由于累计误差的存在和里程计本身的不可靠性，loam通过LaserMapping进行位姿的优化，其原理是，将新的扫描帧与附近的点云通过匹配确定位姿，同时在搜寻”点-线“和”点-面“时进行了细致的处理（过程为搜索线时使用特征值分解，看是否存在特征值较大的主方向；搜索面时使用最小二乘计算平面，若有点距离平面较远，则不是合法的”点-面“对）。
+	\par 优化问题的计算与上面的完全相同。
+	\par 已知优化后点$p'=e(\xi ^\wedge)p$，对应直线的经过点$p_0$，直线方向用\textbf{单位向量}$v$表示，则"点-线"可以使用下面的公式
+	\begin{equation}
+	\vecba{d_{\epsilon}} = v^\wedge(e(\xi ^\wedge)p-p_0)
+	\end{equation}
+	\begin{equation}
+	\frac{\partial \vecba{d_{\epsilon}}}{\partial\delta\xi}
+	=
+	v^\wedge(e(\xi^\wedge)p)^\odot
+	\end{equation}
+	\par 已知优化后点$p'=e(\xi ^\wedge)p$，对应平面通过点$p_0$，平面法线方向用\textbf{单位向量}$v$表示，则"点-面"可以使用下面的公式
+	\begin{equation}
+	\vecba{d_{\epsilon}} = v^{+}(e(\xi ^\wedge)p-p_0)
+	\end{equation}
+	\begin{equation}
+	\frac{\partial \vecba{d_{\epsilon}}}{\partial\delta\xi}
+	=
+	v^{+}(e(\xi^\wedge)p)^\odot
+	\end{equation}
 	
 
 \end{document}
