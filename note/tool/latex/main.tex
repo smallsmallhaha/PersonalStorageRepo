@@ -651,12 +651,12 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	已知初始位姿的李代数为$\xi$，对于$\forall p \in P_1$，有对应点$p_1,p_2,p_3 \in P_2$构成平面，使得点$p$到平面$p_1p_2p_3$的距离最短，该距离用向量表示如下
 	\begin{equation}
 	d_{\epsilon} =
-	\frac{|(\vecba{p p_1} \times \vecba{p p_2}) \cdot \vecba{p p_3}|}{3|S_{p_1 p_2 p_3}|}
+	\frac{|(\vecba{p p_1} \times \vecba{p p_2}) \cdot \vecba{p p_3}|}{2|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	用李代数表示如下
 	\begin{equation}
 	\vecba{d_{\epsilon}} =
-	\frac{(p_3-e(\xi ^\wedge)p)^{+}((p_1-e(\xi ^\wedge)p)^\wedge(p_2-e(\xi ^\wedge)p))}{3|S_{p_1 p_2 p_3}|}
+	\frac{(p_3-e(\xi ^\wedge)p)^{+}((p_1-e(\xi ^\wedge)p)^\wedge(p_2-e(\xi ^\wedge)p))}{2|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	\par 记$p'=e(\xi ^\wedge)p$，$p'_1=p_1-p'$，$p'_2=p_2-p'$，$p'_3=p_3-p'$，$h=(p_3-e(\xi ^\wedge)p)
 	^{+}(
@@ -691,12 +691,12 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	\par "点-面"可以使用下面的公式
 	\begin{equation}
 	\vecba{d_{\epsilon}} =
-	\frac{(p_3-p_1)^{+}(p_2-p_1)^\wedge(e(\xi ^\wedge)p-p_1)}{3|S_{p_1 p_2 p_3}|}
+	\frac{(p_3-p_1)^{+}(p_2-p_1)^\wedge(e(\xi ^\wedge)p-p_1)}{2|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	\begin{equation}
 	\frac{\partial \vecba{d_{\epsilon}}}{\partial\delta\xi}
 	=
-	\frac{(p_3-p_1)^{+}(p_2-p_1)^\wedge(e(\xi ^\wedge)p)^\odot}{3|S_{p_1 p_2 p_3}|}
+	\frac{(p_3-p_1)^{+}(p_2-p_1)^\wedge(e(\xi ^\wedge)p)^\odot}{2|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	
 	\par MATLAB代码推导
