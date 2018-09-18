@@ -25,5 +25,5 @@ static QMetaObject::Connection connect(const QObject *sender, const char *signal
 * an automatic connection (the default) means that if the thread the receiver is living in is the same as the current thread, a direct connection is used; otherwise, a queued connection is used.
 
 ### Note
-若连接类型为AutoConnection，则信号发送者所依附的线程并不重要，发送信号操作(emit)所在线程和信号接收者所依附的线程是否相同决定了连接的类型：若相同则为DirectConnection，槽函数立即被调用；否则为QueuedConnection，槽函数加入接受者所依附线程的事件队列，等待被调用。  
-例如，信号函数在主线程被发射，槽函数依附于工作线程，若工作线程没有单独的事件循环，则该槽函数不会被激发。
+若连接类型为AutoConnection，则连接的类型不是由信号发送者所依附的线程决定，而是由发送信号(emit)所在线程和信号接收者所依附的线程是否相同决定：若相同则为DirectConnection，槽函数立即被调用；否则为QueuedConnection，槽函数加入接受者所依附线程的事件队列，等待被调用。  
+例如，信号函数在主线程被发射，槽函数依附于工作线程，若工作线程没有单独的事件循环，则该槽函数不会被触发。

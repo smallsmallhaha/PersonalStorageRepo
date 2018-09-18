@@ -746,5 +746,80 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	v^{+}(e(\xi^\wedge)p)^\odot
 	\end{equation}
 	
+	
+	\section{SLAM主流算法}
+	\subsection{匹配方法}
+	\subsubsection{特征点/线/面匹配（激光和视觉）}
+	\paragraph{ICP}
+	\paragraph{loam}
+	\subsubsection{直接法（视觉）}
+	\paragraph{光流法}
+	\paragraph{直接法}
+	\subsubsection{概率格网（激光）}
+	\subsection{优化策略}
+	\subsubsection{滤波器方法}
+	\subsubsection*{卡尔曼滤波: KF}
+	已知状态方程和观测方程
+	\begin{equation}
+	\left\{
+	\begin{array}{lr}
+	x_t = F x_{t-1} + B u_{t-1} + w \\
+	z_t = H x_t + v
+	\end{array}
+	\right.
+	\end{equation}
+	\par 其中，$x_t$是系统状态量（如位置、速度、航向），$u_{t-1}$是控制量（如角速度、力），$F$是状态转移矩阵，$B$是输入控制矩阵，$w$是过程噪声，$z_t$是量测量，$H$是状态向量到量测量的变换矩阵，$v$是量测噪声。请注意，上面的$F,B,w,H,v$都有下标t或t-1。过程噪声$w$和量测噪声$v$满足零均值高斯分布：
+	\begin{equation}
+	w \sim N(0,R),v \sim N(0,Q)
+	\end{equation}
+	\par 进一步得到下面的方程组：
+	\begin{equation}
+	\left\{
+	\begin{split}
+	P(x_t)
+	&=N(\overline{x}_t,\overline{P}_t)
+	=N(F \hat{x}_{t-1} + B u_{t-1}, F \hat{P}_{t-1} F^T + R) \\
+	P(z_t|x_t) &=N(H x_t,Q) \\
+	P(x_t|z_t) &= \frac{P(z_t|x_t) P(x_t)}{P(z_t)} \propto P(z_t|x_t) P(x_t)
+	\end{split}
+	\right.
+	\end{equation}
+	\par 其中，第三个等式中的$P(z_t|x_t)$叫似然，$P(x_t)$叫先验。在只有观测方程、没有状态方程时，只能使用MLE（最大似然估计）；在有状态方程后，可以借助先验概率$P(x_t)$，通过MAP（最大后验概率）估计$x_t$。
+	\begin{equation}
+	N(\hat{x}_t,\hat{P}_t) \propto N(\overline{x}_t,\overline{P}_t) \cdot N(H x_t,Q)
+	\end{equation}
+	\par 考虑等式两边的指数部分，可以得到
+	\begin{equation}
+	(x_t-\hat{x}_t)^T\hat{P}_t^{-1}(x_t-\hat{x}_t)
+	=
+	(z_t-H x_t)^T Q^{-1} (z_t-H x_t)
+	+
+	(x_t-\hat{x}_t)^T \overline{P}_t^{-1} (x_t-\hat{x}_t)
+	\end{equation}
+	\par 比较等式两端$x_t$的一次项和二次项系数，可以得到卡尔曼滤波器的结果：
+	\par {a. 预测公式}
+	\begin{equation}
+	\overline{x}_t=F\hat{x}_{t-1} + B u_{t-1}
+	\end{equation}
+	\begin{equation}
+	\overline{P}_t=F\hat{P}_{t-1}F^T+R
+	\end{equation}
+	\par {b. 更新公式}
+	\begin{equation}
+	K=\overline{P}_t H^T(H \overline{P}_t H^T + Q)^{-1}
+	\end{equation}
+	\begin{equation}
+	\hat{x}_t=\overline{t}_t+K(z_t-H \overline{x}_t)
+	\end{equation}
+	\begin{equation}
+	\hat{P}_t=(I-K H)\overline{P}_t
+	\end{equation}
+	\subsubsection*{扩展卡尔曼滤波: EKF}
+	\subsubsection*{无迹卡尔曼滤波: UKF}
+	\subsubsection*{粒子滤波: PF}
+	\subsection{优化方法}
+	\subsubsection{关键帧BA}
+	\subsubsection{图优化}
+	
 
 \end{document}
