@@ -52,28 +52,6 @@ cartographer_node 运行命令
          
          
          
-c++11新特性:
-1. 可变模版参数
-
-void print(){
-	
-}
-
-template <class T, typename ...Args> 
-void print(const T _First, const Args ..._Rest){
-	cout << _First << endl;
-	print(_Rest...);
-}
-
-2. 智能指针
-unique_ptr
-控制权单一
-只能使用std::move()传递控制权
-shared_ptr
-控制权可共享
-使用引用计数
-weak_ptr
-不能决定所指对象的生命周期，引用所指对象时，需要lock()成shared_ptr才能使用
 
 
 _parse_pbstream_file args:

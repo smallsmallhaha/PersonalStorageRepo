@@ -3,3 +3,6 @@ cartographer/html/
 *.png
 drafts/
 
+note/tool/latex/
+!*.tex
+
