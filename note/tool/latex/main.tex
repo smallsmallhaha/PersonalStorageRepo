@@ -35,7 +35,7 @@
 \usepackage{listings}
 %\lstset{extendedchars=true}
 %\lstset{}
-\lstset{numbersep=4pt}
+\lstset{numbersep=4pt,frame=single,breaklines=true}
 
 \begin{document}
 	
@@ -277,44 +277,6 @@
 	\begin{equation}
 		angle2dcm(r_1,r_2,r_3,'xyz')=R_z(r_3) R_y(r_2) R_x(r_1)
 	\end{equation}
-	\\\indent
-	angle2dcm的函数说明如下：
-	\small
-	\begin{lstlisting}{language=Matlab}
-function dcm = angle2dcm( r1, r2, r3, varargin )
-%  ANGLE2DCM Create direction cosine matrix from rotation angles.
-%   N = ANGLE2DCM( R1, R2, R3 ) calculates the direction cosine matrix, N,
-%   for a given set of rotation angles, R1, R2, R3.   R1 is an M array of
-%   first rotation angles.  R2 is an M array of second rotation angles. R3
-%   is an M array of third rotation angles.  N returns an 3-by-3-by-M
-%   matrix containing M direction cosine matrices.  Rotation angles are
-%   input in radians.  
-%
-%   N = ANGLE2DCM( R1, R2, R3, S ) calculates the direction cosine matrix,
-%   N, for a given set of rotation angles, R1, R2, R3, and a specified
-%   rotation sequence, S. 
-%
-%   The default rotation sequence is 'ZYX' where the order of rotation
-%   angles for the default rotation are R1 = Z Axis Rotation, R2 = Y Axis
-%   Rotation, and R3 = X Axis Rotation. 
-%
-%   All rotation sequences, S, are supported: 'ZYX', 'ZYZ', 'ZXY', 'ZXZ',
-%   'YXZ', 'YXY', 'YZX', 'YZY', 'XYZ', 'XYX', 'XZY', and 'XZX'.
-%
-%   Examples:
-%
-%   Determine the direction cosine matrix from rotation angles:
-%      yaw = 0.7854; 
-%      pitch = 0.1; 
-%      roll = 0;
-%      dcm = angle2dcm( yaw, pitch, roll )
-%
-%   Determine the direction cosine matrix from multiple rotation angles:
-%      yaw = [0.7854 0.5]; 
-%      pitch = [0.1 0.3]; 
-%      roll = [0 0.1];
-%      dcm = angle2dcm( pitch, roll, yaw, 'YXZ' )
-	\end{lstlisting}
 	
 	\subsubsection{附录}
 	欧拉角: \url{https://en.wikipedia.org/wiki/Euler_angles}
@@ -699,26 +661,47 @@ function dcm = angle2dcm( r1, r2, r3, varargin )
 	\frac{(p_3-p_1)^{+}(p_2-p_1)^\wedge(e(\xi ^\wedge)p)^\odot}{2|S_{p_1 p_2 p_3}|}
 	\end{equation}
 	
-	\par MATLAB代码推导
+	\par MATLAB代码推导：
+	\small
 	\begin{lstlisting}{language=Matlab}
-	syms x0 y0 z0
-	syms x10 y10 z10 real
-	syms x12 y12 z12
-	syms x13 y13 z13
-	
+	% matrix prefix:
 	% D means 'diag', S means 'skew', d means 'delta'
+	%
+	% variable name:
+	% x0 := p0_x
+	% z10 := p0_z - p1_z
+	
+	%% LaserOdometry derivation
+	syms x0 y0 z0 real
+	syms x10 y10 z10 real
+	syms x12 y12 z12 real
+	syms x13 y13 z13 real
 	Dd13 = diag([x13 y13 z13]);
 	Sd12 = [0 -z12 y12; z12 0 -x12; -y12 x12 0];
 	S0 = [0 -z0 y0; z0 0 -x0; -y0 x0 0];
 	d10 = [x10 y10 z10]';
-	
+	% use 2 points to represent a line
 	disp('point-line')
 	J = Sd12 * [-S0 eye(3)]
 	r = Sd12 * d10
-	
+	% use 3 points to represent a plane
 	disp('point-plane')
 	J = Dd13 * J
 	r = Dd13 * r
+	
+	%% LaserMapping derivation
+	syms x1 y1 z1
+	syms vx vy vz
+	Sv = [0 -vz vy; vz 0 -vx; -vy vx 0];
+	Dv = diag([vx vy vz]);
+	% use a point and a direction vector to represent a line
+	disp('point-line')
+	J = Sv * [-S0 eye(3)]
+	r = Sv * d10
+	% use a point and a normal vector to represent a plane
+	disp('point-plane')
+	J = Dv * [-S0 eye(3)]
+	r = Dv * d10
 	\end{lstlisting}
 	
 	\subsubsection{注意}
