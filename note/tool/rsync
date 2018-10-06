@@ -37,7 +37,7 @@
 
 3. sudo vim /etc/rsyncd.secrets
     ADD ++++++++++++++++++++++
-whu:123
+whu:whu
 
 4. sudo chmod 0600 /etc/rsyncd.secrets
 
@@ -64,3 +64,8 @@ Usages with just one SRC arg and no DEST arg will list the source files instead 
 rsync -av --delete /opt/AlphaStar/ ak@192.168.1.144:/opt/AlphaStar/buildANDinstall/install
 使用rsync守护进程同步:
 rsync -av --delete /opt/AlphaStar/ aka@192.168.1.144::AlphaStar
+
+6. 开机自启
+sudo vim /etc/rc.local
+ADD +++++++++++++++++++++++
+/usr/bin/rsync --daemon
